@@ -1,0 +1,63 @@
+{{- if .Values.persistence.uploads.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zipline.uploadsPvcName" . }}
+  labels:
+    {{- include "zipline.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  accessModes:
+    {{- toYaml .Values.persistence.uploads.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.uploads.size }}
+---
+{{- end }}
+{{- if .Values.persistence.public.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zipline.publicPvcName" . }}
+  labels:
+    {{- include "zipline.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  accessModes:
+    {{- toYaml .Values.persistence.public.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.public.size }}
+---
+{{- end }}
+{{- if .Values.persistence.themes.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zipline.themesPvcName" . }}
+  labels:
+    {{- include "zipline.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  accessModes:
+    {{- toYaml .Values.persistence.themes.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.themes.size }}
+---
+{{- end }}
+{{- if .Values.persistence.postgresql.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "zipline.postgresqlPvcName" . }}
+  labels:
+    {{- include "zipline.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageClassName }}
+  accessModes:
+    {{- toYaml .Values.persistence.postgresql.accessModes | nindent 4 }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.postgresql.size }}
+{{- end }}

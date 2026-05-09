@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "zipline.postgresqlServiceName" . }}
+  labels:
+    helm.sh/chart: {{ include "zipline.chart" . }}
+    {{- include "zipline.postgresqlSelectorLabels" . | nindent 4 }}
+    {{- if .Chart.AppVersion }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+    {{- end }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+      protocol: TCP
+  selector:
+    {{- include "zipline.postgresqlSelectorLabels" . | nindent 4 }}

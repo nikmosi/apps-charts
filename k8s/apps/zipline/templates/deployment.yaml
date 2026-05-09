@@ -5,18 +5,18 @@ metadata:
   labels:
     {{- include "zipline.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "zipline.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: zipline
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "zipline.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -32,18 +32,63 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      initContainers:
+        - name: wait-for-postgresql
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "zipline.secretName" . }}
+                  key: {{ .Values.postgresql.auth.passwordKey }}
+          command:
+            - sh
+            - -c
+            - >
+              until pg_isready -h {{ include "zipline.postgresqlServiceName" . }} -p 5432 -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }};
+              do echo waiting for postgresql; sleep 2; done
       containers:
-        - name: {{ .Chart.Name }}
+        - name: zipline
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POSTGRESQL_USER
+              value: {{ .Values.postgresql.auth.username | quote }}
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "zipline.secretName" . }}
+                  key: {{ .Values.postgresql.auth.passwordKey }}
+            - name: POSTGRESQL_DB
+              value: {{ .Values.postgresql.auth.database | quote }}
+            - name: POSTGRESQL_HOST
+              value: {{ include "zipline.postgresqlServiceName" . | quote }}
+            - name: POSTGRESQL_PORT
+              value: "5432"
+            - name: DATABASE_URL
+              value: "postgres://$(POSTGRESQL_USER):$(POSTGRESQL_PASSWORD)@$(POSTGRESQL_HOST):$(POSTGRESQL_PORT)/$(POSTGRESQL_DB)"
+            - name: CORE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "zipline.secretName" . }}
+                  key: {{ .Values.secrets.coreSecretKey }}
+            {{- range $name, $value := .Values.zipline.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- with .Values.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -52,18 +97,37 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.volumeMounts }}
+            {{- toYaml .Values.zipline.resources | nindent 12 }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- if .Values.persistence.uploads.enabled }}
+            - name: uploads
+              mountPath: /zipline/uploads
+            {{- end }}
+            {{- if .Values.persistence.public.enabled }}
+            - name: public
+              mountPath: /zipline/public
+            {{- end }}
+            {{- if .Values.persistence.themes.enabled }}
+            - name: themes
+              mountPath: /zipline/themes
+            {{- end }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- if .Values.persistence.uploads.enabled }}
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: {{ include "zipline.uploadsPvcName" . }}
+        {{- end }}
+        {{- if .Values.persistence.public.enabled }}
+        - name: public
+          persistentVolumeClaim:
+            claimName: {{ include "zipline.publicPvcName" . }}
+        {{- end }}
+        {{- if .Values.persistence.themes.enabled }}
+        - name: themes
+          persistentVolumeClaim:
+            claimName: {{ include "zipline.themesPvcName" . }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
