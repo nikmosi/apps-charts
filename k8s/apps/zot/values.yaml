@@ -26,9 +26,8 @@ serviceHeadless:
   # Annotations to add to the headless service
   annotations: {}
 service:
-  # type: NodePort
+  type: ClusterIP
   port: 5000
-  # type: ClusterIP
   # Traffic policy; https://kubernetes.io/docs/reference/networking/virtual-ips/#traffic-policies
   internalTrafficPolicy: ""
   externalTrafficPolicy: ""
@@ -145,16 +144,109 @@ startupProbe:
   failureThreshold: 3
 # If mountConfig is true the configMap named $CHART_RELEASE-config is mounted
 # on the pod's '/etc/zot' directory
-mountConfig: false
+mountConfig: true
 # If mountConfig is true the chart creates the '$CHART_RELEASE-config', if it
 # does not exist the user is in charge of managing it (as this file includes a
 # sample file you have to add it empty to handle it externally).
 configFiles:
   config.json: |-
     {
-      "storage": { "rootDirectory": "/var/lib/registry" },
-      "http": { "address": "0.0.0.0", "port": "5000" },
-      "log": { "level": "debug" }
+      "distSpecVersion": "1.0.1",
+      "storage": {
+        "rootDirectory": "/var/lib/registry",
+        "dedupe": true,
+        "commit": true,
+        "gc": true,
+        "gcDelay": "1h",
+        "gcInterval": "24h"
+      },
+      "http": {
+        "address": "0.0.0.0",
+        "port": "5000",
+        "realm": "zot.xinfra.ru",
+        "compat": [
+          "docker2s2"
+        ],
+        "auth": {
+          "htpasswd": {
+            "path": "/secret/htpasswd"
+          },
+          "failDelay": 3
+        },
+        "accessControl": {
+          "adminPolicy": {
+            "users": [
+              "nikmosi"
+            ],
+            "actions": [
+              "read",
+              "create",
+              "update",
+              "delete"
+            ]
+          }
+        }
+      },
+      "log": {
+        "level": "info"
+      },
+      "extensions": {
+        "ui": {
+          "enable": true
+        },
+        "metrics": {
+          "enable": true,
+          "prometheus": {
+            "path": "/metrics"
+          }
+        },
+        "search": {
+          "enable": true
+        },
+        "scrub": {
+          "enable": true,
+          "interval": "24h"
+        },
+        "sync": {
+          "enable": true,
+          "registries": [
+            {
+              "urls": [
+                "https://gcr.io"
+              ],
+              "onDemand": true,
+              "tlsVerify": true,
+              "content": [
+                {
+                  "prefix": "**",
+                  "destination": "/docker-mirror/gcr.io",
+                  "stripPrefix": false
+                }
+              ]
+            },
+            {
+              "urls": [
+                "https://docker.io"
+              ],
+              "onDemand": true,
+              "tlsVerify": true,
+              "content": [
+                {
+                  "prefix": "library/**",
+                  "destination": "/docker-mirror/library",
+                  "stripPrefix": true
+                },
+                {
+                  "prefix": "**",
+                  "destination": "/docker-mirror",
+                  "stripPrefix": false
+                }
+              ]
+            }
+          ],
+          "credentialsFile": "/secret/sync-auth.json"
+        }
+      }
     }
 # Alternatively, the configuration can include authentication and acessControl
 # data and we can use mountSecret option for the passwords.
@@ -202,24 +294,27 @@ externalSecrets: []
 # If mountSecret is true, the Secret named $CHART_RELEASE-secret is mounted on
 # the pod's '/secret' directory (it is used to keep files with passwords, like
 # a `htpasswd` file)
-mountSecret: false
+mountSecret: true
 # If secretFiles does not exist the user is in charge of managing it, again, if
 # you want to manage it the value has to be added empty to avoid using this one
 secretFiles:
-  # Example htpasswd with 'admin:admin' & 'user:user' user:pass pairs
+  # Managed credentials for the Zot registry.
   htpasswd: |-
-    admin:$2y$05$vmiurPmJvHylk78HHFWuruFFVePlit9rZWGA/FbZfTEmNRneGJtha
-    user:$2y$05$L86zqQDfH5y445dcMlwu6uHv.oXFgT6AiJCwpv3ehr7idc0rI3S2G
+    nikmosi:$2y$05$udMmSLfbwVkLbSQWg5ir5.HBAmrj64GcMm2DfearRCjQ5YKISJm8G
+    other:$2y$05$4Kmi7p3t/DZ49LaV6g31OOaofIAPuYZ8daUwXMudhDrgjoRhT3qdi
+  # Optional auth for upstream mirrors. Empty object keeps the file valid JSON.
+  sync-auth.json: |-
+    {}
 # Authentication string for Kubernetes probes, which is needed when `htpasswd`
 # authentication is enabled, but the anonymous access policy is not.
 # It contains a `user:password` string encoded in base64. The example value is
 # from running `echo -n "foo:var" | base64`
-# authHeader: "Zm9vOmJhcg=="
+authHeader: "bmlrbW9zaTpuaWlERnZmRnNzQVV0MVd0RXJxOU5Qc3k="
 
 # If persistence is 'true' the service uses a persistentVolumeClaim to mount a
 # volume for zot on '/var/lib/registry'; by default the pvc used is named
 # '$CHART_RELEASE-pvc', but the name can be changed below
-persistence: false
+persistence: true
 # PVC data, only used if persistence is 'true'
 pvc:
   # When true, the StatefulSet uses volumeClaimTemplates to dynamically provision
@@ -239,9 +334,9 @@ pvc:
   # Volume access mode, if using more than one replica we need
   accessModes: ["ReadWriteOnce"]
   # Size of the volume requested
-  storage: 8Gi
+  storage: 50Gi
   # Name of the storage class to use if it is different than the default one
-  storageClassName: null
+  storageClassName: local-path
 # List of environment variables to set on the container
 env:
 # - name: "TEST"
@@ -277,7 +372,7 @@ extraContainers: []
 # Deployment strategy type
 strategy:
   # strategy.type should be set to Recreate if local storage is used
-  type: RollingUpdate
+  type: Recreate
 #  rollingUpdate:
 #    maxUnavailable: 25%
 
@@ -293,7 +388,7 @@ dnsPolicy: "ClusterFirst"
 # NOTE: need enable metric extension in config.json
 metrics:
   # Start a prometheus exporter
-  enabled: false
+  enabled: true
   # Prometheus Operator ServiceMonitor configuration
   serviceMonitor:
     # Start a ServiceMonitor for Prometheus Operator
