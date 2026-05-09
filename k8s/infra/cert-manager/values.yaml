@@ -1,0 +1,6 @@
+crds:
+  enabled: true
+
+extraEnv:
+  - name: GODEBUG
+    value: http2client=0
