@@ -1,0 +1,23 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dozzle-ingress
+  namespace: monitoring
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - dozzle.xinfra.ru
+      secretName: wildcard-xinfra-ru-tls
+  rules:
+    - host: dozzle.xinfra.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dozzle-service
+                port:
+                  number: 8080
