@@ -44,7 +44,7 @@ ingress:
 
 zipline:
   env:
-    CORE_HOSTNAME: zipline.xinfra.ru
+    CORE_HOSTNAME: "0.0.0.0"
     CORE_PORT: "3000"
     DATASOURCE_LOCAL_DIRECTORY: /zipline/uploads
   resources:
