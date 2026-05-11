@@ -9,9 +9,9 @@ spec:
   secretTemplate:
     annotations:
       reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
-      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "monitoring,apps-zot"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "monitoring,apps-zot,apps-vikunja"
       reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
-      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "monitoring,apps-zot"
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "monitoring,apps-zot,apps-vikunja"
   issuerRef:
     name: letsencrypt-cloudflare
     kind: ClusterIssuer

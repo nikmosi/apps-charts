@@ -1,0 +1,27 @@
+---
+vikunja:
+  configMaps:
+    config:
+      enabled: true
+      data:
+        config.yml: |
+          service:
+            publicurl: https://vikunja.xinfra.ru
+            enableregistration: false
+  persistence:
+    data:
+      enabled: true
+      accessMode: ReadWriteOnce
+      size: 10Gi
+      mountPath: /app/vikunja/files
+  ingress:
+    main:
+      enabled: true
+      hosts:
+        - host: vikunja.xinfra.ru
+          paths:
+            - path: /
+      tls:
+        - hosts:
+            - vikunja.xinfra.ru
+          secretName: wildcard-xinfra-ru-tls
