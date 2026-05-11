@@ -176,7 +176,7 @@ configFiles:
         "accessControl": {
           "adminPolicy": {
             "users": [
-              "nikmosi"
+              "nikmosi", "other"
             ],
             "actions": [
               "read",
