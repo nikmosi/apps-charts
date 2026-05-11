@@ -8,6 +8,11 @@ vikunja:
           service:
             publicurl: https://vikunja.xinfra.ru
             enableregistration: false
+  resources:
+    requests:
+      memory: 64Mi
+    limits:
+      memory: 256Mi
   persistence:
     data:
       enabled: true
