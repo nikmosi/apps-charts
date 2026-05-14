@@ -1,3 +1,4 @@
+---
 replicaCount: 1
 
 image:
@@ -46,6 +47,7 @@ zipline:
   env:
     CORE_HOSTNAME: "0.0.0.0"
     CORE_PORT: "3000"
+    CORE_RETURN_HTTPS_URLS: "true"
     DATASOURCE_LOCAL_DIRECTORY: /zipline/uploads
   resources:
     limits:
