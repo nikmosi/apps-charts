@@ -1,0 +1,23 @@
+---
+authentik:
+  secret_key: "x8gN3vlObrSzpzPEgvGlDkhgMMksyDsaZqoCQeveyOspSTkuuGcUEMu0Hwah7HOHMjmNubn/6H2E/nT7"
+  error_reporting:
+    enabled: false
+  postgresql:
+    password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
+
+server:
+  ingress:
+    ingressClassName: traefik
+    enabled: true
+    hosts:
+      - authentik.xinfra.ru
+    tls:
+      - hosts:
+          - authentik.xinfra.ru
+        secretName: wildcard-xinfra-ru-tls
+
+postgresql:
+  enabled: true
+  auth:
+    password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
