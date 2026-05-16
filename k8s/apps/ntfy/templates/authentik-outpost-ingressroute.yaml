@@ -1,0 +1,25 @@
+{{- if and .Values.ingress.enabled .Values.ingress.authentik.enabled .Values.ingress.authentik.outpost.enabled -}}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ printf "%s-authentik-outpost" (include "ntfy.fullname" .) | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "ntfy.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.ingress.authentik.outpost.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.ingress.authentik.outpost.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    - kind: Rule
+      match: Host(`{{ .Values.ingress.authentik.outpost.host }}`) && PathPrefix(`{{ .Values.ingress.authentik.outpost.pathPrefix }}`)
+      priority: {{ .Values.ingress.authentik.outpost.priority }}
+      services:
+        - name: {{ .Values.ingress.authentik.outpost.serviceName }}
+          namespace: {{ .Values.ingress.authentik.outpost.serviceNamespace }}
+          port: {{ .Values.ingress.authentik.outpost.servicePort }}
+{{- end }}

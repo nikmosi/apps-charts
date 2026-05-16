@@ -62,6 +62,18 @@ ingress:
       - X-authentik-email
       - X-authentik-name
       - X-authentik-uid
+    outpost:
+      enabled: true
+      host: ntfy.xinfra.ru
+      pathPrefix: /outpost.goauthentik.io
+      serviceName: authentik-server
+      serviceNamespace: apps-authentik
+      servicePort: 80
+      entryPoints:
+        - websecure
+      tls:
+        secretName: wildcard-xinfra-ru-tls
+      priority: 2000
 
 topicBypass:
   # Routes matching these topic prefixes bypass authentik and rely on ntfy native auth.
