@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "twitch-sub-bot.fullname" . }}
+  labels:
+    {{- include "twitch-sub-bot.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "twitch-sub-bot.selectorLabels" . | nindent 4 }}
