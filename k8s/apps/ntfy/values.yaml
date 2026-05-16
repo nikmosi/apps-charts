@@ -64,6 +64,7 @@ ingress:
       - X-authentik-uid
     outpost:
       enabled: true
+      routeNamespace: apps-authentik
       host: ntfy.xinfra.ru
       pathPrefix: /outpost.goauthentik.io
       serviceName: authentik-server
