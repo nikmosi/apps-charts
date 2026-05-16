@@ -5,9 +5,14 @@ metadata:
   name: {{ include "ntfy.fullname" . }}
   labels:
     {{- include "ntfy.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- if or .Values.ingress.authentik.enabled .Values.ingress.annotations }}
   annotations:
+    {{- if .Values.ingress.authentik.enabled }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ include "ntfy.authentikMiddlewareRef" . }}
+    {{- end }}
+  {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- end }}
 spec:
   {{- with .Values.ingress.className }}

@@ -1,0 +1,14 @@
+{{- if and .Values.ingress.enabled .Values.ingress.authentik.enabled -}}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "ntfy.authentikMiddlewareName" . }}
+  labels:
+    {{- include "ntfy.labels" . | nindent 4 }}
+spec:
+  forwardAuth:
+    address: {{ .Values.ingress.authentik.address | quote }}
+    trustForwardHeader: {{ .Values.ingress.authentik.trustForwardHeader }}
+    authResponseHeaders:
+      {{- toYaml .Values.ingress.authentik.authResponseHeaders | nindent 6 }}
+{{- end }}

@@ -59,3 +59,17 @@ Create the name of the service account to use.
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the authentik forward-auth middleware.
+*/}}
+{{- define "ntfy.authentikMiddlewareName" -}}
+{{- default (printf "%s-authentik-forward-auth" (include "ntfy.fullname" .)) .Values.ingress.authentik.middlewareName | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create a Traefik Kubernetes CRD middleware reference for Ingress annotations.
+*/}}
+{{- define "ntfy.authentikMiddlewareRef" -}}
+{{- printf "%s-%s@kubernetescrd" .Release.Namespace (include "ntfy.authentikMiddlewareName" .) }}
+{{- end }}

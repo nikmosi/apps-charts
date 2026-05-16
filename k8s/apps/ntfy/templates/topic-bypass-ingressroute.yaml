@@ -1,0 +1,29 @@
+{{- if and .Values.ingress.enabled .Values.ingress.authentik.enabled .Values.topicBypass.enabled -}}
+{{- range $host := .Values.ingress.hosts }}
+{{- range $prefix := $.Values.topicBypass.prefixes }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ printf "%s-%s" (include "ntfy.fullname" $) ($prefix | replace "_" "-" | replace "." "-" | trimSuffix "-") | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "ntfy.labels" $ | nindent 4 }}
+spec:
+  {{- with $.Values.topicBypass.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $.Values.topicBypass.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    - kind: Rule
+      match: Host(`{{ $host.host }}`) && PathRegexp(`^/{{ $prefix }}[^/]*(/.*)?$`)
+      priority: {{ $.Values.topicBypass.priority }}
+      services:
+        - name: {{ include "ntfy.fullname" $ }}
+          port: {{ $.Values.service.port }}
+{{- end }}
+{{- end }}
+{{- end }}
