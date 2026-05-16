@@ -1,0 +1,105 @@
+---
+replicaCount: 1
+
+image:
+  repository: binwiederhier/ntfy
+  pullPolicy: IfNotPresent
+  tag: "v2.22.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+  annotations: {}
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: ntfy.xinfra.ru
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: wildcard-xinfra-ru-tls
+      hosts:
+        - ntfy.xinfra.ru
+
+ntfy:
+  # ntfy.config is rendered as /etc/ntfy/server.yml.
+  config:
+    base-url: https://ntfy.xinfra.ru
+    listen-http: ":8080"
+    cache-file: /var/cache/ntfy/cache.db
+
+  # ntfy.extraArgs are appended after `ntfy serve`.
+  extraArgs: []
+
+  # ntfy.extraEnv adds additional environment variables to the ntfy container.
+  extraEnv: []
+
+persistence:
+  enabled: true
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+startupProbe:
+  httpGet:
+    path: /v1/health
+    port: http
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 30
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

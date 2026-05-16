@@ -1,0 +1,14 @@
+ntfy has been installed.
+
+Service:
+  {{ include "ntfy.fullname" . }}:{{ .Values.service.port }}
+
+{{- if .Values.ingress.enabled }}
+Ingress hosts:
+{{- range .Values.ingress.hosts }}
+  - {{ .host }}
+{{- end }}
+{{- end }}
+
+Run tests:
+  helm test {{ .Release.Name }} --namespace {{ .Release.Namespace }}
