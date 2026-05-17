@@ -163,6 +163,7 @@ configFiles:
       "http": {
         "address": "0.0.0.0",
         "port": "5000",
+        "externalUrl": "https://zot.xinfra.ru",
         "realm": "zot.xinfra.ru",
         "compat": [
           "docker2s2"
@@ -172,9 +173,12 @@ configFiles:
             "providers": {
               "oidc": {
                 "credentialsFile": "/etc/zot/oidc/oidc-credentials.json",
-                "issuer": "https://authentik.example.com/application/o/zot/",
+                "issuer": "https://authentik.xinfra.ru/application/o/zot/",
                 "keypath": "",
-                "scopes": ["openid", "profile", "email"]
+                "scopes": ["openid", "profile", "email"],
+                "claimMapping": {
+                  "username": "preferred_username"
+                }
               }
             }
           },
