@@ -1,0 +1,15 @@
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      forgejo-ssh:
+        port: 8022
+        expose:
+          default: true
+        exposedPort: 22
+        protocol: TCP
