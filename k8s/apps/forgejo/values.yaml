@@ -439,8 +439,24 @@ gitea:
     ## @param gitea.config.git Global settings for Git
     git: {}
 
+    ## @param gitea.config.queue Job queue configuration
+    queue:
+      TYPE: redis
+      CONN_STR: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/2?pool_size=100&idle_timeout=180s
+
     ## @param gitea.config.metrics Settings for the Prometheus endpoint (disabled by default)
     metrics: {}
+
+    ## @param gitea.config.cache Cache configuration
+    cache:
+      ADAPTER: redis
+      HOST: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s
+
+    ## @param gitea.config.session Session/cookie handling
+    session:
+      PROVIDER: redis
+      PROVIDER_CONFIG: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/1?pool_size=100&idle_timeout=180s
+      COOKIE_SECURE: true
 
     ## @param gitea.config.api Settings for the Swagger API documentation endpoints
     api: {}
