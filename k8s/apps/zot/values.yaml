@@ -168,6 +168,16 @@ configFiles:
           "docker2s2"
         ],
         "auth": {
+          "openid": {
+            "providers": {
+              "oidc": {
+                "credentialsFile": "/etc/zot/oidc/oidc-credentials.json",
+                "issuer": "https://authentik.example.com/application/o/zot/",
+                "keypath": "",
+                "scopes": ["openid", "profile", "email"]
+              }
+            }
+          },
           "htpasswd": {
             "path": "/secret/htpasswd"
           },
@@ -290,7 +300,9 @@ configFiles:
 #    mountPath: "/secrets/s1"
 #  - secretName: "secret2"
 #    mountPath: "/secrets/s2"
-externalSecrets: []
+externalSecrets:
+  - secretName: "oidc-credentials"
+    mountPath: "/etc/zot/oidc"
 # If mountSecret is true, the Secret named $CHART_RELEASE-secret is mounted on
 # the pod's '/secret' directory (it is used to keep files with passwords, like
 # a `htpasswd` file)
