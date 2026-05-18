@@ -16,14 +16,14 @@ forgejo:
     ##
     imagePullSecrets: []
     storageClass: "local-path"
-  
+
   ## @param namespaceOverride String to fully override common.names.namespace
   ##
   namespaceOverride: ""
-  
+
   ## @param clusterDomain cluster domain
   clusterDomain: cluster.local
-  
+
   ## @section strategy
   ## @descriptionStart
   ## Do not use `RollingUpdate` for `strategy.type`, it will cause issues with the deployment.
@@ -36,7 +36,7 @@ forgejo:
     rollingUpdate:
       maxSurge: "100%"
       maxUnavailable: 0
-  
+
   ## @section Image
   ## @param image.registry image registry, e.g. gcr.io,docker.io
   ## @param image.repository Image to start for this pod
@@ -54,10 +54,10 @@ forgejo:
     pullPolicy: IfNotPresent
     rootless: true
     fullOverride: ""
-  
+
   ## @param imagePullSecrets Secret to use for pulling the image
   imagePullSecrets: []
-  
+
   ## @section Service
   service:
     ## @param service.http.type Kubernetes service type for web traffic
@@ -118,7 +118,7 @@ forgejo:
       annotations: {}
       labels: {}
       loadBalancerClass:
-  
+
   ## @section Ingress
   ## @param ingress.enabled Enable ingress
   ## @param ingress.className Ingress class name
@@ -141,7 +141,7 @@ forgejo:
       - hosts:
           - git.xinfra.ru
         secretName: wildcard-xinfra-ru-tls
-  
+
   # Enables Gateway API HTTPRoute as a replacement for traditional Ingress resources
   ## @section Gateway-API HTTPRoute
   ## @param httpRoute.enabled Enables Gateway API HTTPRoute as a replacement for traditional Ingress resources
@@ -177,7 +177,7 @@ forgejo:
     #         value: https
     port:
     terminate: true
-  
+
   # Enables Gateway API TCPRoute for SSH traffic
   ## @section Gateway-API TCPRoute
   ## @param tcpRoute.enabled Enables Gateway API TCPRoute for SSH traffic
@@ -192,7 +192,7 @@ forgejo:
       #   namespace: gateway-ns
       #   sectionName: ssh  # name of the Gateway listener for SSH
     port:
-  
+
   ## @section Route
   ## @param route.enabled Enable route
   ## @param route.annotations Route annotations
@@ -234,7 +234,7 @@ forgejo:
       # -----BEGIN CERTIFICATE-----
       # ...
       # -----END CERTIFICATE-----
-  
+
   ## @section deployment
   #
   ## @descriptionStart
@@ -248,13 +248,13 @@ forgejo:
     requests:
       cpu: 100m
       memory: 128Mi
-  
+
   ## Use an alternate scheduler, e.g. "stork".
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
   ##
   ## @param schedulerName Use an alternate scheduler, e.g. "stork"
   schedulerName: ""
-  
+
   ## @param deployment.env  Additional environment variables to pass to containers
   ## @param deployment.terminationGracePeriodSeconds How long to wait until forcefully kill the pod
   ## @param deployment.labels Labels for the deployment
@@ -268,23 +268,12 @@ forgejo:
     terminationGracePeriodSeconds: 60
     labels: {}
     annotations: {}
-  
-  extraVolumes:
-    - name: localtime
-      hostPath:
-        path: /usr/share/zoneinfo/Asia/Novosibirsk
-        type: File
-  
-  extraVolumeMounts:
-    - name: localtime
-      mountPath: /etc/localtime
-      readOnly: true
-  
+
   ## @param replicaCount number of replicas for the deployment
   replicaCount: 1
-  
+
   ## @section ServiceAccount
-  
+
   ## @param serviceAccount.create Enable the creation of a ServiceAccount
   ## @param serviceAccount.name Name of the created ServiceAccount, defaults to release name. Can also link to an externally provided ServiceAccount that should be used.
   ## @param serviceAccount.automountServiceAccountToken Enable/disable auto mounting of the service account token
@@ -299,7 +288,7 @@ forgejo:
     # - name: private-registry-access
     annotations: {}
     labels: {}
-  
+
   ## @section Persistence
   #
   ## @param persistence.enabled Enable persistent storage
@@ -327,7 +316,7 @@ forgejo:
     volumeName: ""
     annotations:
       helm.sh/resource-policy: keep
-  
+
   # Configure commit/action signing prerequisites
   ## @section Signing
   #
@@ -349,7 +338,7 @@ forgejo:
     ssh:
       privateKey: ""
       existingSecret: ""
-  
+
   ## @section Gitea
   #
   gitea:
@@ -365,7 +354,7 @@ forgejo:
       password: "$;N}fNASK~9qIv>vk~MDJulAk`?;@,PS"
       email: "gitea@local.domain"
       passwordMode: keepUpdated
-  
+
     ## @param gitea.metrics.enabled Enable Forgejo metrics
     ## @param gitea.metrics.serviceMonitor.enabled Enable Forgejo metrics service monitor
     ## @param gitea.metrics.serviceMonitor.namespace Namespace in which Prometheus is running
@@ -376,7 +365,7 @@ forgejo:
         namespace: ""
         #  additionalLabels:
         #    prometheus-release: prom1
-  
+
     ## @param gitea.ldap LDAP configuration
     ldap: []
       # - name: "LDAP 1"
@@ -392,7 +381,7 @@ forgejo:
       #  bindPassword:
       #  usernameAttribute:
       #  publicSSHKeyAttribute:
-  
+
     # Either specify inline `key` and `secret` or refer to them via `existingSecret`
     ## @param gitea.oauth OAuth configuration
     oauth:
@@ -401,11 +390,11 @@ forgejo:
         key: "tulI4PllRYfo3dAaUM8KHEpfvLEXH0sRcYXgtDNZ"
         secret: "xUINFnpapZOQvOorvcWwOJhXtOoOTlUDdZB5CVgoqzN9qDCooZlicZ5oULJa1RcuFRQ59QizyENBFnJHZbMOyU42KwHDrZxajkqu5Flup9Sxw4U1dgrANfKYCTvT6Qaz"
         autoDiscoverUrl: "https://authentik.xinfra.ru/application/o/forgejo/.well-known/openid-configuration"
-  
+
     ## @param gitea.ssh.logLevel Configure OpenSSH's log level. Only available for root-based Forgejo image.
     ssh:
       logLevel: "INFO"
-  
+
     ## @section `app.ini` overrides
     ## @descriptionStart
     ## Every value described in the [Cheat
@@ -417,27 +406,27 @@ forgejo:
       # values in the DEFAULT section
       # (https://forgejo.org/docs/latest/admin/config-cheat-sheet/#overall-default)
       # are un-namespaced
-  
+
       ## @param gitea.config.APP_NAME Application name, used in the page title
       APP_NAME: "Forgejo: Beyond coding. We forge."
-  
+
       ## @param gitea.config.RUN_MODE Application run mode, affects performance and debugging: `dev` or `prod`
       RUN_MODE: prod
-  
+
       ## @param gitea.config.cors Cross-origin resource sharing settings
       cors: {}
-  
+
       ## @param gitea.config.ui User interface settings
       ui: {}
-  
+
       service:
         DISABLE_REGISTRATION: true
         REQUIRE_SIGNIN_VIEW: true
-  
+
       repository:
         ENABLE_PUSH_CREATE_USER: true
         ENABLE_PUSH_CREATE_ORG: true
-  
+
       ## @param gitea.config.server [object] General server settings
       server:
         DOMAIN: git.xinfra.ru
@@ -446,77 +435,77 @@ forgejo:
         SSH_PORT: 22
         SSH_LISTEN_PORT: 2222
         START_SSH_SERVER: true
-  
+
       ## @param gitea.config.openid Configuration for authentication with OpenID (disabled by default)
       openid: {}
-  
+
       ## @param gitea.config.oauth2_client OAuth2 client settings
       oauth2_client: {}
-  
+
       ## @param gitea.config.git Global settings for Git
       git: {}
-  
+
       ## @param gitea.config.queue Job queue configuration
       queue:
         TYPE: redis
         CONN_STR: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/2?pool_size=100&idle_timeout=180s
-  
+
       ## @param gitea.config.metrics Settings for the Prometheus endpoint (disabled by default)
       metrics: {}
-  
+
       ## @param gitea.config.cache Cache configuration
       cache:
         ADAPTER: redis
         HOST: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/0?pool_size=100&idle_timeout=180s
-  
+
       ## @param gitea.config.session Session/cookie handling
       session:
         PROVIDER: redis
         PROVIDER_CONFIG: redis://forgejo-valkey.apps-forgejo.svc.cluster.local:6379/1?pool_size=100&idle_timeout=180s
         COOKIE_SECURE: true
-  
+
       ## @param gitea.config.api Settings for the Swagger API documentation endpoints
       api: {}
-  
+
       ## @param gitea.config.oauth2 Settings for the [OAuth2 provider](https://forgejo.org/docs/latest/admin/oauth2-provider/)
       oauth2: {}
-  
+
       ## @param gitea.config.time Locale settings
       time: {}
-  
+
       ## @param gitea.config.migrations Settings for Git repository migrations
       migrations: {}
-  
+
       ## @param gitea.config.federation Federation configuration
       federation: {}
-  
+
       ## @param gitea.config.packages Package registry settings
       packages: {}
-  
+
       ## @param gitea.config.mirror Configuration for repository mirroring
       mirror: {}
-  
+
       ## @param gitea.config.lfs Large File Storage configuration
       lfs: {}
-  
+
       ## @param gitea.config.repo-avatar Repository avatar storage configuration
       repo-avatar: {}
-  
+
       ## @param gitea.config.avatar User/org avatar storage configuration
       avatar: {}
-  
+
       ## @param gitea.config.storage General storage settings
       storage: {}
-  
+
       ## @param gitea.config.proxy Proxy configuration (disabled by default)
       proxy: {}
-  
+
       ## @param gitea.config.actions Configuration for [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/)
       actions: {}
-  
+
       ## @param gitea.config.other Uncategorized configuration options
       other: {}
-  
+
     ## @section LivenessProbe
     #
     ## @param gitea.livenessProbe.enabled Enable liveness probe
@@ -536,7 +525,7 @@ forgejo:
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 10
-  
+
     ## @section ReadinessProbe
     #
     ## @param gitea.readinessProbe.enabled Enable readiness probe
@@ -558,7 +547,7 @@ forgejo:
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 3
-  
+
     # # Uncomment the startup probe to enable and modify it for your needs.
     ## @section StartupProbe
     #
@@ -578,7 +567,7 @@ forgejo:
       periodSeconds: 10
       successThreshold: 1
       failureThreshold: 10
-  
+
   # By default, removed or moved settings that still remain in a user defined values.yaml will cause Helm to fail running the install/update.
   # Set it to false to skip this basic validation check.
   ## @section Advanced
