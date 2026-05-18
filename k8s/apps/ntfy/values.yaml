@@ -52,7 +52,7 @@ ingress:
       hosts:
         - ntfy.xinfra.ru
   authentik:
-    enabled: true
+    enabled: false
     middlewareName: ""
     address: http://authentik-server.apps-authentik.svc.cluster.local/outpost.goauthentik.io/auth/traefik
     trustForwardHeader: true
