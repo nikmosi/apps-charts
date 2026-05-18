@@ -269,6 +269,17 @@ deployment:
   labels: {}
   annotations: {}
 
+extraVolumes:
+  - name: localtime
+    hostPath:
+      path: /usr/share/zoneinfo/Asia/Novosibirsk
+      type: File
+
+extraVolumeMounts:
+  - name: localtime
+    mountPath: /etc/localtime
+    readOnly: true
+
 ## @param replicaCount number of replicas for the deployment
 replicaCount: 1
 
@@ -422,6 +433,10 @@ gitea:
     service:
       DISABLE_REGISTRATION: true
       REQUIRE_SIGNIN_VIEW: true
+
+    repository:
+      ENABLE_PUSH_CREATE_USER: true
+      ENABLE_PUSH_CREATE_ORG: true
 
     ## @param gitea.config.server [object] General server settings
     server:
