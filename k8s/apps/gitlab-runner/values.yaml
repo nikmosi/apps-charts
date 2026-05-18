@@ -25,6 +25,13 @@ terminationGracePeriodSeconds: 3600
 concurrent: 5
 checkInterval: 3
 
+metrics:
+  enabled: true
+  podMonitor:
+    enabled: true
+    interval: 30s
+    path: /metrics
+
 rbac:
   create: true
   generatedServiceAccountName: "gitlab-runner"

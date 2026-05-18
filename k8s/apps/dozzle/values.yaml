@@ -47,6 +47,16 @@ service:
   port: 8080
   targetPort: http
 
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
+  path: /metrics
+  labels: {}
+  annotations: {}
+  metricRelabelings: []
+  relabelings: []
+
 env:
   - name: TZ
     value: Asia/Novosibirsk

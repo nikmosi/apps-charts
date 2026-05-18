@@ -12,6 +12,12 @@ global:
       value: Asia/Novosibirsk
 
 server:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s
   ingress:
     ingressClassName: traefik
     enabled: true
@@ -32,3 +38,11 @@ postgresql:
         value: '{{ (include "postgresql.v1.database" .) }}'
       - name: TZ
         value: Asia/Novosibirsk
+
+worker:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s

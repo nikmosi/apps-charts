@@ -38,6 +38,16 @@ service:
   targetPort: 8080
   annotations: {}
 
+serviceMonitor:
+  enabled: true
+  interval: 30s
+  scrapeTimeout: 10s
+  path: /metrics
+  labels: {}
+  annotations: {}
+  metricRelabelings: []
+  relabelings: []
+
 ingress:
   enabled: true
   className: ""
@@ -92,6 +102,7 @@ ntfy:
   config:
     base-url: https://ntfy.xinfra.ru
     listen-http: ":8080"
+    enable-metrics: true
     cache-file: /var/cache/ntfy/cache.db
     auth-file: /var/cache/ntfy/user.db
     auth-default-access: deny-all

@@ -372,7 +372,7 @@ forgejo:
     metrics:
       enabled: true
       serviceMonitor:
-        enabled: false
+        enabled: true
         namespace: ""
         #  additionalLabels:
         #    prometheus-release: prom1

@@ -29,6 +29,16 @@ service:
   type: ClusterIP
   port: 3000
 
+serviceMonitor:
+  enabled: false
+  interval: 30s
+  scrapeTimeout: 10s
+  path: /metrics
+  labels: {}
+  annotations: {}
+  metricRelabelings: []
+  relabelings: []
+
 ingress:
   enabled: true
   className: traefik

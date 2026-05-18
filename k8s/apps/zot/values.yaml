@@ -410,16 +410,12 @@ metrics:
   # Prometheus Operator ServiceMonitor configuration
   serviceMonitor:
     # Start a ServiceMonitor for Prometheus Operator
-    enabled: false
+    enabled: true
     # Specify the interval at which metrics should be scraped
     interval: "30s"
     # Specify the path to scrape metrics from
     path: "/metrics"
-    # basicAuth credentials for serviceMonitor
-    basicAuth:
-      secretName: basic-auth
-      usernameKey: username
-      passwordKey: password
+    basicAuth: null
 # Test hooks configuration
 test:
   image:
