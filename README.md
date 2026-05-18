@@ -12,14 +12,15 @@ helm upgrade --install reflector emberstack/reflector -n reflector -f k8s/infra/
 helm upgrade --install authentik authentik/authentik -n apps-authentik -f k8s/apps/authentik/values.yaml
 helm upgrade --install dozzle k8s/apps/dozzle -n monitoring
 helm upgrade --install forgejo k8s/apps/forgejo -n apps-forgejo
-helm upgrade --install gitlab-runner gitlab/gitlab-runner -n gitlab-runner -f k8s/apps/gitlab-runner/values.yaml
 helm upgrade --install goldilocks fairwinds-stable/goldilocks -n apps-goldilocks -f k8s/apps/goldilocks/values.yaml
-helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring -f k8s/apps/kube-prometheus-stack/values.yaml
+helm upgrade --install kube-prometheus-stack oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack -n apps-kube-prometheus-stack -f k8s/apps/kube-prometheus-stack/values.yaml
 helm upgrade --install ntfy k8s/apps/ntfy -n apps-ntfy
 helm upgrade --install trivy-operator aqua/trivy-operator -n trivy-system -f k8s/apps/trivy-operator/values.yaml
-helm upgrade --install twitch-sub-bot k8s/apps/twitch-sub-bot -n apps-twitch-sub-bot
 helm upgrade --install vaultwarden vaultwarden/vaultwarden -n apps-vaultwarden -f k8s/apps/vaultwarden/values.yaml
 helm upgrade --install vikunja oci://ghcr.io/go-vikunja/helm-chart/vikunja -n apps-vikunja -f k8s/apps/vikunja/values.yaml
 helm upgrade --install zipline k8s/apps/zipline -n apps-zipline
 helm upgrade --install zot project-zot/zot -n apps-zot -f k8s/apps/zot/values.yaml
+
+helm upgrade --install gitlab-runner gitlab/gitlab-runner -n gitlab-runner -f k8s/apps/gitlab-runner/values.yaml
+helm upgrade --install twitch-sub-bot k8s/apps/twitch-sub-bot -n apps-twitch-sub-bot
 ```
