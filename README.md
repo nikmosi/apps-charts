@@ -16,7 +16,7 @@ helm upgrade --install goldilocks fairwinds-stable/goldilocks -n apps-goldilocks
 helm upgrade --install kube-prometheus-stack oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack -n apps-kube-prometheus-stack -f k8s/apps/kube-prometheus-stack/values.yaml
 helm upgrade --install ntfy k8s/apps/ntfy -n apps-ntfy
 helm upgrade --install trivy-operator aqua/trivy-operator -n trivy-system -f k8s/apps/trivy-operator/values.yaml
-helm upgrade --install vaultwarden vaultwarden/vaultwarden -n apps-vaultwarden -f k8s/apps/vaultwarden/values.yaml
+helm upgrade --install vaultwarden vaultwarden/vaultwarden -n apps-warden -f k8s/apps/vaultwarden/values.yaml
 helm upgrade --install vikunja oci://ghcr.io/go-vikunja/helm-chart/vikunja -n apps-vikunja -f k8s/apps/vikunja/values.yaml
 helm upgrade --install zipline k8s/apps/zipline -n apps-zipline
 helm upgrade --install zot project-zot/zot -n apps-zot -f k8s/apps/zot/values.yaml
