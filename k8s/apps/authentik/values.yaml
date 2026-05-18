@@ -6,6 +6,11 @@ authentik:
   postgresql:
     password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
 
+global:
+  env:
+    - name: TZ
+      value: Asia/Novosibirsk
+
 server:
   ingress:
     ingressClassName: traefik
@@ -21,3 +26,9 @@ postgresql:
   enabled: true
   auth:
     password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
+  primary:
+    extraEnvVars:
+      - name: POSTGRES_DB
+        value: '{{ (include "postgresql.v1.database" .) }}'
+      - name: TZ
+        value: Asia/Novosibirsk

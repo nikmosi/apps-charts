@@ -100,7 +100,9 @@ ntfy:
   extraArgs: []
 
   # ntfy.extraEnv adds additional environment variables to the ntfy container.
-  extraEnv: []
+  extraEnv:
+    - name: TZ
+      value: "Asia/Novosibirsk"
 
 persistence:
   enabled: true

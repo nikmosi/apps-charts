@@ -260,7 +260,9 @@ schedulerName: ""
 ## @param deployment.labels Labels for the deployment
 ## @param deployment.annotations Annotations for the Forgejo deployment to be created
 deployment:
-  env: []
+  env:
+    - name: TZ
+      value: "Asia/Novosibirsk"
     # - name: VARIABLE
     #   value: my-value
   terminationGracePeriodSeconds: 60

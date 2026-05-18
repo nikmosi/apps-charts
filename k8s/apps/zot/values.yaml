@@ -355,6 +355,8 @@ pvc:
   storageClassName: local-path
 # List of environment variables to set on the container
 env:
+- name: TZ
+  value: "Asia/Novosibirsk"
 # - name: "TEST"
 #  value: "ME"
 # - name: SECRET_NAME

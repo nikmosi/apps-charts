@@ -44,6 +44,9 @@ spec:
             - "1000"
             - --dir
             - /data
+          env:
+            - name: TZ
+              value: "Asia/Novosibirsk"
           ports:
             - name: redis
               containerPort: 6379

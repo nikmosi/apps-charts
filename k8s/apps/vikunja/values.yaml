@@ -1,5 +1,7 @@
 ---
 vikunja:
+  env:
+    TZ: Asia/Novosibirsk
   configMaps:
     config:
       enabled: true

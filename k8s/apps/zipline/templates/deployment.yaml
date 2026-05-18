@@ -37,6 +37,8 @@ spec:
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
           env:
+            - name: TZ
+              value: "Asia/Novosibirsk"
             - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
