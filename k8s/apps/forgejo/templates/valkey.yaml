@@ -1,0 +1,87 @@
+{{- if .Values.valkey.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.valkey.name | quote }}
+  labels:
+    {{- include "forgejo-stack.labels" . | nindent 4 }}
+    {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.valkey.service.type }}
+  selector:
+    {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 4 }}
+  ports:
+    - name: redis
+      port: {{ .Values.valkey.service.port }}
+      targetPort: redis
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.valkey.name | quote }}
+  labels:
+    {{- include "forgejo-stack.labels" . | nindent 4 }}
+    {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Values.valkey.name | quote }}
+  replicas: {{ .Values.valkey.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.valkey.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: valkey
+          image: "{{ .Values.valkey.image.repository }}:{{ .Values.valkey.image.tag }}"
+          imagePullPolicy: {{ .Values.valkey.image.pullPolicy }}
+          command:
+            - valkey-server
+          args:
+            {{- toYaml .Values.valkey.args | nindent 12 }}
+          {{- with .Values.valkey.env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: redis
+              containerPort: {{ .Values.valkey.service.port }}
+              protocol: TCP
+          {{- with .Values.valkey.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.valkey.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.valkey.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.valkey.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          {{- toYaml .Values.valkey.persistence.accessModes | nindent 10 }}
+        storageClassName: {{ .Values.valkey.persistence.storageClassName | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.valkey.persistence.size | quote }}
+{{- end }}

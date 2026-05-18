@@ -1,0 +1,17 @@
+{{- if .Values.tcpIngressRoute.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: {{ .Values.tcpIngressRoute.name | quote }}
+  labels:
+    {{- include "forgejo-stack.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    {{- toYaml .Values.tcpIngressRoute.entryPoints | nindent 4 }}
+  routes:
+    - match: {{ .Values.tcpIngressRoute.match | quote }}
+      services:
+        - name: {{ .Values.tcpIngressRoute.service.name | quote }}
+          port: {{ .Values.tcpIngressRoute.service.port }}
+{{- end }}

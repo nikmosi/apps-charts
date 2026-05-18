@@ -1,0 +1,11 @@
+---
+apiVersion: v2
+name: forgejo-stack
+description: Forgejo stack for local Kubernetes
+type: application
+version: 0.1.0
+appVersion: "15.0.2"
+dependencies:
+  - name: forgejo
+    version: 17.1.0
+    repository: oci://code.forgejo.org/forgejo-helm

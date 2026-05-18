@@ -1,0 +1,4 @@
+Forgejo stack has been rendered.
+
+The official Forgejo chart is installed as a dependency. Local resources in this
+chart manage Forgejo Valkey and the Traefik TCP route for SSH.
