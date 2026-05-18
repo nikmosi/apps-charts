@@ -1,0 +1,4 @@
+Dozzle has been rendered.
+
+The chart deploys Dozzle in Kubernetes mode and grants read-only pod, log, node,
+and pod metrics access through the configured service account.

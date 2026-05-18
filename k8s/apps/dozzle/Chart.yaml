@@ -1,0 +1,14 @@
+---
+apiVersion: v2
+name: dozzle
+description: A Helm chart for Dozzle Kubernetes log viewer
+type: application
+version: 0.1.0
+appVersion: "latest"
+keywords:
+  - logs
+  - kubernetes
+  - dozzle
+home: https://dozzle.dev/
+sources:
+  - https://github.com/amir20/dozzle

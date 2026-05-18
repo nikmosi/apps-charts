@@ -1,0 +1,26 @@
+{{- if .Values.rbac.create }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .Values.rbac.clusterRoleName | quote }}
+  labels:
+    {{- include "dozzle.labels" . | nindent 4 }}
+rules:
+  {{- toYaml .Values.rbac.rules | nindent 2 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Values.rbac.clusterRoleBindingName | quote }}
+  labels:
+    {{- include "dozzle.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "dozzle.serviceAccountName" . | quote }}
+    namespace: {{ .Release.Namespace | quote }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .Values.rbac.clusterRoleName | quote }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

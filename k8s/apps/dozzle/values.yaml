@@ -1,0 +1,121 @@
+---
+replicaCount: 1
+
+image:
+  repository: amir20/dozzle
+  tag: latest
+  digest: sha256:1cc972250626553009ddacbdf1f5725b681cdcbabe551fec69cd728882ffbc58
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: dozzle
+
+strategy:
+  type: Recreate
+
+serviceAccount:
+  create: true
+  name: pod-viewer
+  automountServiceAccountToken: true
+
+rbac:
+  create: true
+  clusterRoleName: pod-viewer-role
+  clusterRoleBindingName: pod-viewer-binding
+  rules:
+    - apiGroups:
+        - ""
+      resources:
+        - pods
+        - pods/log
+        - nodes
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups:
+        - metrics.k8s.io
+      resources:
+        - pods
+      verbs:
+        - get
+        - list
+
+service:
+  name: dozzle-service
+  type: ClusterIP
+  port: 8080
+  targetPort: http
+
+env:
+  - name: TZ
+    value: Asia/Novosibirsk
+  - name: DOZZLE_MODE
+    value: k8s
+
+persistence:
+  enabled: true
+  claimName: dozzle-data
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+  mountPath: /data
+
+ingress:
+  enabled: true
+  name: dozzle-ingress
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: dozzle.xinfra.ru
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - dozzle.xinfra.ru
+      secretName: wildcard-xinfra-ru-tls
+
+forwardAuth:
+  enabled: true
+  name: authentik-forward-auth
+  address: http://authentik-server.apps-authentik.svc.cluster.local/outpost.goauthentik.io/auth/traefik
+  trustForwardHeader: true
+  authResponseHeaders:
+    - X-authentik-username
+    - X-authentik-groups
+    - X-authentik-email
+    - X-authentik-name
+    - X-authentik-uid
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+livenessProbe:
+  enabled: true
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 20
+  timeoutSeconds: 1
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  tcpSocket:
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
