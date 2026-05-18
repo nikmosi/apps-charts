@@ -75,6 +75,9 @@ grafana:
       - ReadWriteOnce
     size: 5Gi
 
+  initChownData:
+    enabled: false
+
   grafana.ini:
     server:
       domain: grafana.xinfra.ru
