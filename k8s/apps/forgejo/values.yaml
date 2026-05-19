@@ -501,7 +501,9 @@ forgejo:
       proxy: {}
 
       ## @param gitea.config.actions Configuration for [Forgejo Actions](https://forgejo.org/docs/latest/user/actions/)
-      actions: {}
+      actions:
+        LOG_RETENTION_DAYS: 90
+        ARTIFACT_RETENTION_DAYS: 30
 
       ## @param gitea.config.other Uncategorized configuration options
       other: {}
