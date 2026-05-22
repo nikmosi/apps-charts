@@ -1,0 +1,518 @@
+---
+enabled: true
+
+image:
+  registry: ghcr.io
+  repository: authelia/authelia
+  pullPolicy: IfNotPresent
+
+rbac:
+  enabled: true
+  serviceAccountName: authelia
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: traefik
+  rulesOverride:
+    - host: auth.xinfra.ru
+      path: /
+  tls:
+    enabled: true
+    secret: wildcard-xinfra-ru-tls
+  traefikCRD:
+    enabled: true
+    disableIngressRoute: false
+    entryPoints:
+      - websecure
+    middlewares:
+      auth:
+        authResponseHeaders:
+          - Remote-User
+          - Remote-Name
+          - Remote-Email
+          - Remote-Groups
+
+pod:
+  kind: Deployment
+  replicas: 1
+  env:
+    - name: TZ
+      value: Asia/Novosibirsk
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+persistence:
+  enabled: true
+  size: 1Gi
+  accessModes:
+    - ReadWriteOnce
+
+secret:
+  disabled: false
+  additionalSecrets:
+    authelia-users:
+      path: users
+      items:
+        - key: users_database.yml
+          path: users_database.yml
+
+configMap:
+  theme: dark
+  default_2fa_method: totp
+
+  server:
+    port: 9091
+    path: ""
+    headers:
+      csp_template: ""
+    buffers:
+      read: 4096
+      write: 4096
+    timeouts:
+      read: 6 seconds
+      write: 6 seconds
+      idle: 30 seconds
+    endpoints:
+      enable_pprof: false
+      enable_expvars: false
+      automatic_authz_implementations:
+        - ForwardAuth
+      authz: {}
+      rate_limits:
+        reset_password_start:
+          enable: true
+          buckets: []
+        reset_password_finish:
+          enable: true
+          buckets: []
+        second_factor_totp:
+          enable: true
+          buckets: []
+        second_factor_duo:
+          enable: true
+          buckets: []
+        session_elevation_start:
+          enable: true
+          buckets: []
+        session_elevation_finish:
+          enable: true
+          buckets: []
+        openid_connect_token:
+          enable: true
+          buckets: []
+        openid_connect_pushed_authorization_request:
+          enable: true
+          buckets: []
+
+  log:
+    level: info
+    format: text
+
+  telemetry:
+    metrics:
+      enabled: true
+      port: 9959
+      serviceMonitor:
+        enabled: true
+
+  identity_validation:
+    reset_password:
+      jwt_lifespan: 5 minutes
+      jwt_algorithm: HS256
+      secret:
+        value: c0558b00c31b86ffae1ce03065db83f998a844d3cdf817a7d9844381869107eb
+    elevated_session:
+      code_lifespan: 5 minutes
+      elevation_lifespan: 10 minutes
+      characters: 8
+      require_second_factor: true
+      skip_second_factor: false
+
+  totp:
+    issuer: XInfra
+    algorithm: SHA1
+    digits: 6
+    period: 30
+    skew: 1
+
+  webauthn:
+    disable: false
+    enable_passkey_login: false
+    display_name: XInfra
+    attestation_conveyance_preference: indirect
+    timeout: 60 seconds
+    selection_criteria:
+      attachment: ""
+      discoverability: preferred
+      user_verification: preferred
+    filtering:
+      permitted_aaguids: []
+      prohibited_aaguids: []
+      prohibit_backup_eligibility: false
+    metadata:
+      enabled: false
+      cache_policy: strict
+      validate_trust_anchor: true
+      validate_entry: true
+      validate_entry_permit_zero_aaguid: false
+      validate_status: true
+      validate_status_permitted: []
+      validate_status_prohibited: []
+
+  ntp:
+    address: udp://time.cloudflare.com:123
+    version: 4
+    max_desync: 3 seconds
+    disable_startup_check: false
+    disable_failure: false
+
+  authentication_backend:
+    password_reset:
+      disable: false
+    password_change:
+      disable: false
+    refresh_interval: 5 minutes
+    ldap:
+      enabled: false
+    file:
+      enabled: true
+      path: /secrets/users/users_database.yml
+      watch: true
+      search:
+        email: true
+        case_insensitive: true
+      password:
+        algorithm: sha2crypt
+        sha2crypt:
+          variant: sha512
+          iterations: 50000
+          salt_length: 16
+
+  password_policy:
+    standard:
+      enabled: true
+      min_length: 12
+      require_uppercase: true
+      require_lowercase: true
+      require_number: true
+      require_special: false
+    zxcvbn:
+      enabled: false
+      min_score: 3
+
+  access_control:
+    default_policy: deny
+    rules:
+      - domain:
+          - auth.xinfra.ru
+        policy: bypass
+      - domain:
+          - dozzle.xinfra.ru
+          - goldilocks.xinfra.ru
+          - ntfy.xinfra.ru
+        policy: one_factor
+      - domain:
+          - "*.xinfra.ru"
+        policy: two_factor
+
+  session:
+    name: authelia_session
+    same_site: lax
+    expiration: 1 hour
+    inactivity: 10 minutes
+    remember_me: 1 month
+    encryption_key:
+      value: 5a5904fc37d5ef47a46622b75fbe107860b53def976df1a517e664b6e6ccdc0e
+    cookies:
+      - domain: xinfra.ru
+        subdomain: auth
+        default_redirection_url: https://auth.xinfra.ru
+        same_site: lax
+        expiration: 1 hour
+        inactivity: 10 minutes
+    redis:
+      enabled: false
+
+  regulation:
+    modes:
+      - user
+    max_retries: 3
+    find_time: 2 minutes
+    ban_time: 5 minutes
+
+  storage:
+    encryption_key:
+      value: b9fb3e2366194044a2025d2a766119f0937f7f00683be3fbcce3ebf5c26f7d06
+    local:
+      enabled: true
+      path: /config/db.sqlite3
+    mysql:
+      enabled: false
+    postgres:
+      enabled: false
+
+  notifier:
+    disable_startup_check: true
+    filesystem:
+      enabled: true
+      filename: /config/notification.txt
+    smtp:
+      enabled: false
+
+  identity_providers:
+    oidc:
+      enabled: true
+      hmac_secret:
+        value: 44a47c39f25104e7be72faa898ff3750a0832a8ad86e2661e3062940b30c1f76
+      lifespans:
+        access_token: 1 hour
+        refresh_token: 8 hours
+        id_token: 1 hour
+        authorize_code: 1 minute
+        device_code: 10 minutes
+        custom: {}
+      enforce_pkce: public_clients_only
+      enable_pkce_plain_challenge: false
+      enable_jwt_access_token_stateless_introspection: false
+      discovery_signed_response_alg: ""
+      discovery_signed_response_key_id: ""
+      require_pushed_authorization_requests: false
+      minimum_parameter_entropy: 8
+      enable_client_debug_messages: false
+      pushed_authorizations:
+        enforce: false
+        context_lifespan: 5 minutes
+      authorization_policies: {}
+      claims_policies:
+        default:
+          id_token:
+            - email
+            - email_verified
+            - alt_emails
+            - preferred_username
+            - name
+            - groups
+          access_token:
+            - groups
+        grafana:
+          id_token:
+            - email
+            - email_verified
+            - preferred_username
+            - name
+            - groups
+            - entitlements
+          access_token:
+            - groups
+            - entitlements
+          custom_claims:
+            entitlements:
+              attribute: groups
+      scopes:
+        groups:
+          claims:
+            - groups
+        entitlements:
+          claims:
+            - entitlements
+      jwks:
+        - key_id: authelia-rs256-2026-05
+          algorithm: RS256
+          use: sig
+          key:
+            value: |
+              -----BEGIN RSA PRIVATE KEY-----
+              MIIEowIBAAKCAQEA6TI/LkfX0xrMgs5QtVsuTr0GzKVTVSnbkyZ7piR/tlvq+qyt
+              AL1A8qUuzcFTXHe3NdRAOQazHwx1nKF1hg+LDGEHNxr8hF/hTsfoFqfMKTpfCkGN
+              WG/8uu7LaeAMOWSrov94yzgJP11bFGpkdbMGycsn9RNRv+BbwJQdQCspBG79sW1t
+              CzPwShyidUXsob6gKtSwk0YEfoWcIHK8j0aiK5qQ/6QCoevYo+n1F2atnXsCgoUL
+              YeQTvULnBgf0N5W2mTIn1qXLGkmDCl4vVGzGX/glRA7uZTxALmph1HDMEa18IJZL
+              R4IIc2FLj2zPLihjUaePWUcFrZFa0CWjBa/aVQIDAQABAoIBADVf3RKyem108ZDR
+              +Kqd2VpHzS3bfFieiUWjtgL30Sxz2vNvwPRNnPc8xBrvkC02sH43W9DBng9x+lx0
+              nzHlTlnxvmVIPbptuKPfwRkoZGQeWmD+UoQGs9W0cOYFlD6xslBPQX5gD8vLShzA
+              4kgHRzs6TuW6+4fbqhyIui41AsEi13e4WyNaMazkLb6yZGBYUS4NEdgFjjb3MNvU
+              R+l493YHx7UzLtJnrxkpCh4sx3UAnUnwilPs44ZMmyZQ9YV5vMgY8hU8dFE0lvAv
+              2idMbV0OcP6cVI+vCE9l4mweZd3FBI+rDM6Na9wWnPUtxdtMT/hUaHavFUdUgtNY
+              Yi4/d5ECgYEA+nvcQ7Vvj2g/nGJtWRW0WICFdeoZA1eXtEM62FKjH0n2w+tR5WBv
+              qh3Od+gxIA/m7AcVJw6qXTpSpCvu/NQUKs4Y8fO8JhjFME4tvoXMwQ9I9IrCc7W8
+              T4LBit5+u/8NRs9N1NfR1kEkE98q9MhhQ8BCBN8dNJPvkZ7M87H/VIUCgYEA7lTs
+              3aaNvoURQeBYH/67QgXXPLlsufE10WMqbAv8CjwknTRJt52O4L4Bhrq5b3f/LtSp
+              vPQbRYmP88Amh0OAjUSlSLUeYPa7hrXYFzkeMJQnxIjtVMsuCeVWGK3VqiHkx5Tu
+              qxWWMDvDPBqNH7CszoAOFWEAn5rWLDs+4UuHf5ECgYBakBPISz4lnGx7Tz732ZgV
+              84nNYzFd+vp3i2MoOWCO/IACv/8hLqfQ2uv+gG3aiMVWCw2DzJKeGGsuvk+vC8Kq
+              408zk4swPv50g5+YZens12jqOY0qpseJ+92cJuutbv7O3j7muI0+qNixcpumWxiH
+              lWiJOF3n16DjhoXVikKlvQKBgQCPT6He5nf1SC7IXg6frp0LZle2vAkVBmZGMksg
+              DVTRErkxjm+Faciwe5CPY1h+Hrnjfx1R8bc0aTOWbsS8MWrrh4ub3M0XoUXCCzaV
+              QFNXAr+m/m83vbVBXhYXYPBKDXd0S6n4VlKpTkZnrc+Obr56raXKVTn6vzBqCHYX
+              I0OnAQKBgCiBmYBvRyEmoXjwlvgftaXZWz0BFE/cOOv3uFZghED3zI4WSf8/pyFX
+              Cd6ZcpHGh/NhQQaNv5JIgCuawuPqxxLB/v14Ribrllhhr6y5m8Z6jQvdxdOzj/NT
+              siAYtbhFn0FZiA5dMgVFsZmEGNJVsUQauFdRQc6hcHRFQp0+alyj
+              -----END RSA PRIVATE KEY-----
+      cors:
+        endpoints: []
+        allowed_origins: []
+        allowed_origins_from_client_redirect_uris: false
+      clients:
+        - client_id: grafana
+          client_name: Grafana
+          client_secret:
+            value: $plaintext$3fEmKosUzSDkzOFy6emFRapuMGJIxlW70s5qRadiR_Gs-aeZg6s56qmGK6Z-Tqr-
+          public: false
+          authorization_policy: two_factor
+          claims_policy: grafana
+          redirect_uris:
+            - https://grafana.xinfra.ru/login/generic_oauth
+          scopes:
+            - openid
+            - profile
+            - email
+            - groups
+            - entitlements
+            - offline_access
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+            - refresh_token
+          require_pkce: true
+          pkce_challenge_method: S256
+          token_endpoint_auth_method: client_secret_basic
+
+        - client_id: forgejo
+          client_name: Forgejo
+          client_secret:
+            value: $plaintext$U8nzI1gk8OqVWEt2TgsJpNWlUXcRr7L7mm6hDsHrrUqfJkQ0lhlG_Zmg9YKGI8mE
+          public: false
+          authorization_policy: two_factor
+          claims_policy: default
+          redirect_uris:
+            - https://forgejo.xinfra.ru/user/oauth2/authelia/callback
+            - https://forgejo.xinfra.ru/user/oauth2/authentik/callback
+          scopes:
+            - openid
+            - profile
+            - email
+            - groups
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+          require_pkce: false
+          token_endpoint_auth_method: client_secret_basic
+
+        - client_id: 9GaHg9eweQN8edJ1J4Ox205V5EkktTM907jGjzrb
+          client_name: Vikunja
+          client_secret:
+            value: $plaintext$4Hp28B8Xc4NPRRFQcbHwby9rRjUZLBIxMDtW08qRJA3Zcs8q0pU0Nvgi4CWgO57Isv6UyAKytwaVhO6DUVTjnvkJG9Kz3dDXsS2v8t7zz9D86JAFLsKpx7ECZU8yxnFe
+          public: false
+          authorization_policy: two_factor
+          claims_policy: default
+          redirect_uris:
+            - https://vikunja.xinfra.ru/auth/openid/authelia
+            - https://vikunja.xinfra.ru/auth/openid/authentik
+          scopes:
+            - openid
+            - profile
+            - email
+            - groups
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+          require_pkce: false
+          token_endpoint_auth_method: client_secret_basic
+
+        - client_id: GF5EXFDkYc1wzKOVEZXI4LHAOevsPz7J7g1ag95Y
+          client_name: Vaultwarden
+          client_secret:
+            value: $plaintext$2NXgQJppwSFyptbWyXfCM4EZh2PBDeIrYK6Xibt7J2nFDMOxka4jSfhPaLBwp4H8e1L3ILbaIDMJ1QrY72EMItwcFrglDRH8mIhnWA4kpLqNphivfXi9hq2YWtfwp3wg
+          public: false
+          authorization_policy: two_factor
+          claims_policy: default
+          redirect_uris:
+            - https://vaultwarden.xinfra.ru/identity/connect/oidc-signin
+            - https://vaultwarden.xinfra.ru/sso-connector.html
+          scopes:
+            - openid
+            - profile
+            - email
+            - offline_access
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+            - refresh_token
+          require_pkce: true
+          pkce_challenge_method: S256
+          token_endpoint_auth_method: client_secret_basic
+
+        - client_id: PKNtTDqi5REDQYuUiIMScLAtQNnCeDTMglxhU04I
+          client_name: zot
+          client_secret:
+            value: $plaintext$KJbBsSUJzpXZX6EZQAtIPD8GrkunSJMuG8J6wRZdWONhGaPHHEfRBQmIxO6MNFpS44dlgKFQ4nWVU78kDQRT6M34rL3gpBbqb4cibFD8AhwoxLouYjqZPl1mawfzy2Cy
+          public: false
+          authorization_policy: two_factor
+          claims_policy: default
+          redirect_uris:
+            - https://zot.xinfra.ru/zot/auth/callback/oidc
+          scopes:
+            - openid
+            - profile
+            - email
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+          require_pkce: false
+          token_endpoint_auth_method: client_secret_basic
+
+        - client_id: zipline
+          client_name: Zipline
+          client_secret:
+            value: $plaintext$C3h3OdzeOaQVU0Zl7rNAGgcKxqFSYkpX35eMURe0Ns8CQjsnR1J2bPUKdqiBYHAn
+          public: false
+          authorization_policy: two_factor
+          claims_policy: default
+          redirect_uris:
+            - https://zipline.xinfra.ru/api/auth/oauth/oidc
+          scopes:
+            - openid
+            - profile
+            - email
+            - offline_access
+          response_types:
+            - code
+          grant_types:
+            - authorization_code
+            - refresh_token
+          require_pkce: false
+          token_endpoint_auth_method: client_secret_basic
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: authelia-users
+      namespace: apps-authelia
+    type: Opaque
+    stringData:
+      users_database.yml: |
+        users:
+          nik:
+            disabled: false
+            displayname: Nik
+            password: "$6$9f8NrMhQC/syeCmu$yAdExpZg3j6IKRkqZ4y5JosnRXf34XUjSqRpfI6SE7w.duVs1Qwb7E7hL859kDQIN7F0ndm/SewbeAdogcPOU1"
+            email: nik@xinfra.ru
+            groups:
+              - admins
+              - "Grafana Admins"
+              - "Grafana Editors"
