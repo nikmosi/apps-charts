@@ -39,6 +39,8 @@ ingress:
 pod:
   kind: Deployment
   replicas: 1
+  strategy:
+    type: Recreate
   env:
     - name: TZ
       value: Asia/Novosibirsk
@@ -391,8 +393,7 @@ configMap:
           authorization_policy: two_factor
           claims_policy: default
           redirect_uris:
-            - https://forgejo.xinfra.ru/user/oauth2/authelia/callback
-            - https://forgejo.xinfra.ru/user/oauth2/authentik/callback
+            - https://git.xinfra.ru/user/oauth2/authelia/callback
           scopes:
             - openid
             - profile

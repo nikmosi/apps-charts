@@ -385,11 +385,11 @@ forgejo:
     # Either specify inline `key` and `secret` or refer to them via `existingSecret`
     ## @param gitea.oauth OAuth configuration
     oauth:
-      - name: "authentik"
+      - name: "authelia"
         provider: openidConnect
-        key: "tulI4PllRYfo3dAaUM8KHEpfvLEXH0sRcYXgtDNZ"
-        secret: "xUINFnpapZOQvOorvcWwOJhXtOoOTlUDdZB5CVgoqzN9qDCooZlicZ5oULJa1RcuFRQ59QizyENBFnJHZbMOyU42KwHDrZxajkqu5Flup9Sxw4U1dgrANfKYCTvT6Qaz"
-        autoDiscoverUrl: "https://authentik.xinfra.ru/application/o/forgejo/.well-known/openid-configuration"
+        key: "forgejo"
+        secret: "U8nzI1gk8OqVWEt2TgsJpNWlUXcRr7L7mm6hDsHrrUqfJkQ0lhlG_Zmg9YKGI8mE"
+        autoDiscoverUrl: "https://auth.xinfra.ru/.well-known/openid-configuration"
 
     ## @param gitea.ssh.logLevel Configure OpenSSH's log level. Only available for root-based Forgejo image.
     ssh:
