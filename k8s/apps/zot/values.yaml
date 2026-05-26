@@ -173,7 +173,7 @@ configFiles:
             "providers": {
               "oidc": {
                 "credentialsFile": "/etc/zot/oidc/oidc-credentials.json",
-                "issuer": "https://authentik.xinfra.ru/application/o/zot/",
+                "issuer": "https://auth.xinfra.ru",
                 "keypath": "",
                 "scopes": ["openid", "profile", "email"],
                 "claimMapping": {
@@ -355,8 +355,8 @@ pvc:
   storageClassName: local-path
 # List of environment variables to set on the container
 env:
-- name: TZ
-  value: "Asia/Novosibirsk"
+  - name: TZ
+    value: "Asia/Novosibirsk"
 # - name: "TEST"
 #  value: "ME"
 # - name: SECRET_NAME

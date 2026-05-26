@@ -552,7 +552,7 @@ sso:
   ## @param sso.authority the OpenID Connect Discovery endpoint without '/.well-known/openid-configuration' and trailing '/'-
   ## Example: https://account.example.com/realm/example
   ##
-  authority: "https://authentik.xinfra.ru/application/o/vaultwarden/"
+  authority: "https://auth.xinfra.ru"
   ## @param sso.scopes OpenID connect scopes to use
   ##
   scopes: "openid email profile offline_access"
