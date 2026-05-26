@@ -507,7 +507,7 @@ extraObjects:
     stringData:
       users_database.yml: |
         users:
-          nik:
+          nikmosi:
             disabled: false
             displayname: Nik
             password: "$6$9f8NrMhQC/syeCmu$yAdExpZg3j6IKRkqZ4y5JosnRXf34XUjSqRpfI6SE7w.duVs1Qwb7E7hL859kDQIN7F0ndm/SewbeAdogcPOU1"

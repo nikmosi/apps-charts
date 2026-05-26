@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: apps-docs
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pc-docs-service
+  namespace: apps-docs
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: pc-docs-service
+  namespace: apps-docs
+subsets:
+  - addresses:
+      - ip: 192.168.3.2
+    ports:
+      - name: http
+        port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: docs-xinfra-ingress
+  namespace: apps-docs
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: docs.xinfra.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pc-docs-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - docs.xinfra.ru
+      secretName: wildcard-xinfra-ru-tls
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-xinfra-ingress
+  namespace: apps-docs
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: auth.xinfra.ru
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pc-docs-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - auth.xinfra.ru
+      secretName: wildcard-xinfra-ru-tls
