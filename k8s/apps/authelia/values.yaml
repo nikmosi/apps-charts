@@ -505,9 +505,9 @@ extraObjects:
         users:
           nikmosi:
             disabled: false
-            displayname: Nik
-            password: "$6$9f8NrMhQC/syeCmu$yAdExpZg3j6IKRkqZ4y5JosnRXf34XUjSqRpfI6SE7w.duVs1Qwb7E7hL859kDQIN7F0ndm/SewbeAdogcPOU1"
-            email: nik@xinfra.ru
+            displayname: nikmosi
+            password: "$6$rounds=50000$8PM8XXtCNuzN2fmO$x1GSGLMOmeCEvRGvStUmfrQ.s5mERfImj1otMXtaHQFN4pnuLSu8WYLE/eVmU4flNUjCxWlkcTH6r3/.Tw.N4/"
+            email: nikmosi@xinfra.ru
             groups:
               - admins
               - "Grafana Admins"
