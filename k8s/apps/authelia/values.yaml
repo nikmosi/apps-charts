@@ -235,7 +235,6 @@ configMap:
     cookies:
       - domain: xinfra.ru
         subdomain: auth
-        default_redirection_url: https://auth.xinfra.ru
         same_site: lax
         expiration: 1 hour
         inactivity: 10 minutes
@@ -318,9 +317,6 @@ configMap:
             entitlements:
               attribute: groups
       scopes:
-        groups:
-          claims:
-            - groups
         entitlements:
           claims:
             - entitlements
