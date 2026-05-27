@@ -1,0 +1,22 @@
+---
+loadtest:
+  name: stealth-noise
+  locust_host: "https://google.com"
+  headless: true
+
+  users: 10
+  spawnRate: 1
+
+  locust_locustfile_configmap: "stealth-locustfile"
+  locust_locustfile: "main.py"
+
+master:
+  replicas: 1
+worker:
+  replicas: 1
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
