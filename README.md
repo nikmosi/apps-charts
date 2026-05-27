@@ -24,4 +24,6 @@ helm upgrade --install zot project-zot/zot -n apps-zot -f k8s/apps/zot/values.ya
 
 helm upgrade --install gitlab-runner gitlab/gitlab-runner -n gitlab-runner -f k8s/apps/gitlab-runner/values.yaml
 helm upgrade --install twitch-sub-bot k8s/apps/twitch-sub-bot -n apps-twitch-sub-bot
+kubectl apply -k k8s/apps/locust
+helm upgrade --install traffic-noise deliveryhero/locust --namespace apps-noise -f k8s/apps/locust/values.yaml
 ```
