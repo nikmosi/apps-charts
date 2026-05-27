@@ -1,0 +1,15 @@
+{{- if .Values.forwardAuth.enabled }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Values.forwardAuth.name | quote }}
+  labels:
+    {{- include "adguard.labels" . | nindent 4 }}
+spec:
+  forwardAuth:
+    address: {{ .Values.forwardAuth.address | quote }}
+    trustForwardHeader: {{ .Values.forwardAuth.trustForwardHeader }}
+    authResponseHeaders:
+      {{- toYaml .Values.forwardAuth.authResponseHeaders | nindent 6 }}
+{{- end }}

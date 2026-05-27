@@ -1,0 +1,11 @@
+AdGuard Home has been installed.
+
+DNS service:
+  kubectl get svc {{ .Values.service.dns.name }} -n {{ .Release.Namespace }}
+
+Admin UI:
+  https://{{ (index .Values.ingress.hosts 0).host }}
+
+After the initial setup, keep the admin web interface on port
+{{ .Values.service.ui.port }} so the Ingress and readiness probes continue to
+target the correct port.

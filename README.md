@@ -10,6 +10,7 @@ helm upgrade --install cert-manager oci://quay.io/jetstack/charts/cert-manager -
 helm upgrade --install reflector emberstack/reflector -n reflector -f k8s/infra/reflector/values.yaml
 
 helm upgrade --install authelia authelia/authelia -n apps-authelia -f k8s/apps/authelia/values.yaml
+helm upgrade --install adguard k8s/apps/adguard -n apps-adguard --create-namespace
 helm upgrade --install dozzle k8s/apps/dozzle -n monitoring
 helm upgrade --install forgejo k8s/apps/forgejo -n apps-forgejo
 helm upgrade --install goldilocks fairwinds-stable/goldilocks -n apps-goldilocks -f k8s/apps/goldilocks/values.yaml
