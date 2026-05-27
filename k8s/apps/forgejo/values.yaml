@@ -244,7 +244,7 @@ forgejo:
   ## @param resources Kubernetes resources
   resources:
     limits:
-      memory: 239Mi
+      memory: 384Mi
     requests:
       cpu: 23m
       memory: 215Mi
@@ -625,7 +625,7 @@ valkey:
       cpu: 15m
       memory: 100Mi
     limits:
-      memory: 100Mi
+      memory: 192Mi
   podSecurityContext: {}
   securityContext:
     runAsUser: 0

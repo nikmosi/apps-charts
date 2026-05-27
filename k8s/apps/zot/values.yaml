@@ -370,7 +370,7 @@ resources:
     cpu: 15m
     memory: 260Mi
   limits:
-    memory: 287Mi
+    memory: 512Mi
 
 # Extra Volume Mounts
 extraVolumeMounts: []

@@ -62,7 +62,7 @@ controller:
   # controller.resources -- The resources block for the controller pods
   resources:
     limits:
-      memory: 100Mi
+      memory: 192Mi
     requests:
       cpu: 15m
       memory: 100Mi
@@ -200,7 +200,7 @@ dashboard:
   # dashboard.resources -- A resources block for the dashboard.
   resources:
     limits:
-      memory: 100Mi
+      memory: 192Mi
     requests:
       cpu: 15m
       memory: 100Mi

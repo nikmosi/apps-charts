@@ -29,7 +29,7 @@ vikunja:
       cpu: 15m
       memory: 100Mi
     limits:
-      memory: 100Mi
+      memory: 192Mi
   persistence:
     data:
       enabled: true
