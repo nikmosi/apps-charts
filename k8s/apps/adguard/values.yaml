@@ -33,6 +33,7 @@ service:
     annotations: {}
     externalTrafficPolicy: Cluster
     port: 53
+    encryptedPort: 853
   ui:
     name: adguard-ui
     type: ClusterIP
@@ -53,6 +54,26 @@ ingress:
     - hosts:
         - adguard.xinfra.ru
       secretName: wildcard-xinfra-ru-tls
+
+dohIngress:
+  enabled: true
+  name: adguard-doh-ingress
+  className: traefik
+  annotations: {}
+  host: adguard.xinfra.ru
+  path: /dns-query
+  tls:
+    secretName: wildcard-xinfra-ru-tls
+
+encryption:
+  enabled: true
+  serverName: adguard.xinfra.ru
+  secretName: wildcard-xinfra-ru-tls
+  mountPath: /etc/adguardhome/tls
+  certificateFile: tls.crt
+  privateKeyFile: tls.key
+  forceHttps: false
+  strictSniCheck: false
 
 forwardAuth:
   enabled: true

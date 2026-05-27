@@ -95,6 +95,11 @@
               "type": "integer",
               "minimum": 1,
               "maximum": 65535
+            },
+            "encryptedPort": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
             }
           }
         },
@@ -165,6 +170,63 @@
         },
         "authResponseHeaders": {
           "type": "array"
+        }
+      }
+    },
+    "dohIngress": {
+      "type": "object",
+      "required": ["enabled", "name", "host", "path"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "className": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "host": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "tls": {
+          "type": "object"
+        }
+      }
+    },
+    "encryption": {
+      "type": "object",
+      "required": ["enabled", "serverName", "secretName", "mountPath", "certificateFile", "privateKeyFile"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "serverName": {
+          "type": "string"
+        },
+        "secretName": {
+          "type": "string"
+        },
+        "mountPath": {
+          "type": "string"
+        },
+        "certificateFile": {
+          "type": "string"
+        },
+        "privateKeyFile": {
+          "type": "string"
+        },
+        "forceHttps": {
+          "type": "boolean"
+        },
+        "strictSniCheck": {
+          "type": "boolean"
         }
       }
     },

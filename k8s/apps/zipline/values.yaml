@@ -62,11 +62,10 @@ zipline:
     DATASOURCE_LOCAL_DIRECTORY: /zipline/uploads
   resources:
     limits:
-      cpu: 1000m
-      memory: 1Gi
+      memory: 466Mi
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 15m
+      memory: 423Mi
 
 postgresql:
   image:
@@ -79,11 +78,10 @@ postgresql:
     passwordKey: POSTGRESQL_PASSWORD
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      memory: 100Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 23m
+      memory: 100Mi
 
 secrets:
   existingSecret: ""

@@ -121,7 +121,12 @@ persistence:
     - ReadWriteOnce
   size: 1Gi
 
-resources: {}
+resources:
+  requests:
+    cpu: 11m
+    memory: 50Mi
+  limits:
+    memory: 53Mi
 
 livenessProbe:
   httpGet:

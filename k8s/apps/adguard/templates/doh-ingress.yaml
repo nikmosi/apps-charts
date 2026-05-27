@@ -1,0 +1,32 @@
+{{- if .Values.dohIngress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.dohIngress.name | quote }}
+  labels:
+    {{- include "adguard.labels" . | nindent 4 }}
+  {{- with .Values.dohIngress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.dohIngress.className }}
+  ingressClassName: {{ . | quote }}
+  {{- end }}
+  tls:
+    - hosts:
+        - {{ .Values.dohIngress.host | quote }}
+      secretName: {{ .Values.dohIngress.tls.secretName | quote }}
+  rules:
+    - host: {{ .Values.dohIngress.host | quote }}
+      http:
+        paths:
+          - path: {{ .Values.dohIngress.path | quote }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.service.ui.name | quote }}
+                port:
+                  number: {{ $.Values.service.ui.port }}
+{{- end }}

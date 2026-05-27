@@ -61,10 +61,11 @@ controller:
   topologySpreadConstraints: []
   # controller.resources -- The resources block for the controller pods
   resources:
-    limits: {}
+    limits:
+      memory: 100Mi
     requests:
-      cpu: 25m
-      memory: 256Mi
+      cpu: 15m
+      memory: 100Mi
   # controller.podSecurityContext -- Defines the podSecurityContext for the controller pod
   podSecurityContext:
     seccompProfile:
@@ -198,10 +199,11 @@ dashboard:
 
   # dashboard.resources -- A resources block for the dashboard.
   resources:
-    limits: {}
+    limits:
+      memory: 100Mi
     requests:
-      cpu: 25m
-      memory: 256Mi
+      cpu: 15m
+      memory: 100Mi
   # dashboard.podSecurityContext -- Defines the podSecurityContext for the dashboard pod
   podSecurityContext:
     seccompProfile:

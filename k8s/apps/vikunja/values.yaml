@@ -26,9 +26,10 @@ vikunja:
                         scope: openid email profile
   resources:
     requests:
-      memory: 64Mi
+      cpu: 15m
+      memory: 100Mi
     limits:
-      memory: 256Mi
+      memory: 100Mi
   persistence:
     data:
       enabled: true

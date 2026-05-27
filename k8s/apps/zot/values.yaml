@@ -365,6 +365,13 @@ env:
 #      name: mysecret
 #      key: username
 
+resources:
+  requests:
+    cpu: 15m
+    memory: 260Mi
+  limits:
+    memory: 287Mi
+
 # Extra Volume Mounts
 extraVolumeMounts: []
 # - name: data

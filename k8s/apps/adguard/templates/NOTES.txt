@@ -6,6 +6,12 @@ DNS service:
 Admin UI:
   https://{{ (index .Values.ingress.hosts 0).host }}
 
+DNS-over-HTTPS:
+  https://{{ .Values.dohIngress.host }}{{ .Values.dohIngress.path }}
+
+DNS-over-TLS / DNS-over-QUIC:
+  {{ .Values.encryption.serverName }}:{{ .Values.service.dns.encryptedPort }}
+
 After the initial setup, keep the admin web interface on port
 {{ .Values.service.ui.port }} so the Ingress and readiness probes continue to
 target the correct port.

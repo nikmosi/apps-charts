@@ -51,6 +51,14 @@ spec:
             - name: http
               containerPort: {{ .Values.service.ui.port }}
               protocol: TCP
+          {{- if .Values.encryption.enabled }}
+            - name: dot
+              containerPort: {{ .Values.service.dns.encryptedPort }}
+              protocol: TCP
+            - name: doq
+              containerPort: {{ .Values.service.dns.encryptedPort }}
+              protocol: UDP
+          {{- end }}
           {{- with .Values.env }}
           env:
             {{- toYaml . | nindent 12 }}
@@ -74,6 +82,11 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+          {{- if .Values.encryption.enabled }}
+            - name: tls
+              mountPath: {{ .Values.encryption.mountPath | quote }}
+              readOnly: true
+          {{- end }}
           {{- if .Values.persistence.enabled }}
             - name: data
               mountPath: /opt/adguardhome/work
@@ -85,6 +98,11 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+      {{- if .Values.encryption.enabled }}
+        - name: tls
+          secret:
+            secretName: {{ .Values.encryption.secretName | quote }}
+      {{- end }}
       {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
