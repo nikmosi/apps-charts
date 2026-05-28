@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+name: traffic-noise
+description: Deploy the Locust traffic-noise workload
+type: application
+version: 0.1.0
+appVersion: "2.15.1"
+keywords:
+  - locust
+  - load-testing
+  - traffic
+dependencies:
+  - name: locust
+    version: "0.31.6"
+    repository: "https://charts.deliveryhero.io/"

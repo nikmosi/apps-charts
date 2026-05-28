@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "locustfile": {
+      "type": "object",
+      "properties": {
+        "sourcePath": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "sourcePath"
+      ]
+    },
+    "locust": {
+      "type": "object",
+      "properties": {
+        "loadtest": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "locust_host": {
+              "type": "string",
+              "minLength": 1
+            },
+            "headless": {
+              "type": "boolean"
+            },
+            "locust_locustfile_configmap": {
+              "type": "string",
+              "minLength": 1
+            },
+            "locust_locustfile": {
+              "type": "string",
+              "minLength": 1
+            },
+            "locust_lib_configmap": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "locust_host",
+            "headless",
+            "locust_locustfile_configmap",
+            "locust_locustfile"
+          ]
+        },
+        "master": {
+          "type": "object",
+          "properties": {
+            "replicas": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "resources": {
+              "type": "object"
+            }
+          }
+        },
+        "worker": {
+          "type": "object",
+          "properties": {
+            "replicas": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "resources": {
+              "type": "object"
+            }
+          }
+        },
+        "podSecurityContext": {
+          "type": "object"
+        },
+        "securityContext": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "loadtest"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "locustfile",
+    "locust"
+  ],
+  "additionalProperties": true
+}

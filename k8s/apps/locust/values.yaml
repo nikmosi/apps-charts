@@ -1,30 +1,48 @@
 ---
-loadtest:
-  name: stealth-noise
-  locust_host: "https://google.com"
-  headless: true
+locustfile:
+  sourcePath: "main.py"
 
-  locust_locustfile_configmap: "stealth-locustfile"
-  locust_locustfile: "main.py"
-  locust_lib_configmap: ""
+locust:
+  loadtest:
+    name: stealth-noise
+    locust_host: "https://google.com"
+    headless: true
 
-master:
-  replicas: 1
-  args:
-    - --users=10
-    - --spawn-rate=1
-  resources:
-    limits:
-      memory: 256Mi
-    requests:
-      cpu: 50m
-      memory: 128Mi
+    locust_locustfile_configmap: "stealth-locustfile"
+    locust_locustfile: "main.py"
+    locust_lib_configmap: ""
 
-worker:
-  replicas: 1
-  resources:
-    limits:
-      memory: 512Mi
-    requests:
-      cpu: 50m
-      memory: 128Mi
+  master:
+    replicas: 1
+    args:
+      - --users=10
+      - --spawn-rate=1
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+  worker:
+    replicas: 1
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL

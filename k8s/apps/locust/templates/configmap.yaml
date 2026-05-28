@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ required "locust.loadtest.locust_locustfile_configmap is required" .Values.locust.loadtest.locust_locustfile_configmap }}
+  labels:
+    {{- include "traffic-noise.labels" . | nindent 4 }}
+data:
+  {{ required "locust.loadtest.locust_locustfile is required" .Values.locust.loadtest.locust_locustfile }}: |-
+{{ .Files.Get .Values.locustfile.sourcePath | indent 4 }}
