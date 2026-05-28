@@ -39,6 +39,7 @@ helm.sh/chart: {{ include "twitch-sub-bot.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/part-of: twitch-sub-bot
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

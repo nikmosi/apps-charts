@@ -3,12 +3,7 @@ kind: Service
 metadata:
   name: {{ include "zipline.postgresqlServiceName" . }}
   labels:
-    helm.sh/chart: {{ include "zipline.chart" . }}
-    {{- include "zipline.postgresqlSelectorLabels" . | nindent 4 }}
-    {{- if .Chart.AppVersion }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-    {{- end }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "zipline.postgresqlLabels" . | nindent 4 }}
 spec:
   type: ClusterIP
   ports:

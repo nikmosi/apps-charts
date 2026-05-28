@@ -36,6 +36,7 @@ helm.sh/chart: {{ include "dozzle.chart" . }}
 app.kubernetes.io/name: {{ include "dozzle.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/part-of: dozzle
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 

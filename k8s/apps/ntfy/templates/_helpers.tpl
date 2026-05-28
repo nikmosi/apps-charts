@@ -38,6 +38,7 @@ app.kubernetes.io/component: server
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/part-of: ntfy
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

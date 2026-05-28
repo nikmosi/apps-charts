@@ -3,6 +3,9 @@ locustfile:
   sourcePath: "main.py"
 
 locust:
+  extraLabels:
+    app.kubernetes.io/part-of: locust
+
   loadtest:
     name: stealth-noise
     locust_host: "https://google.com"

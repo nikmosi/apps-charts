@@ -36,6 +36,7 @@ helm.sh/chart: {{ include "adguard.chart" . }}
 app.kubernetes.io/name: {{ include "adguard.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/part-of: adguard
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 

@@ -38,6 +38,7 @@ app.kubernetes.io/component: zipline
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/part-of: zipline
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
@@ -55,6 +56,19 @@ PostgreSQL selector labels.
 {{- define "zipline.postgresqlSelectorLabels" -}}
 {{ include "zipline.selectorLabels" . }}
 app.kubernetes.io/component: postgresql
+{{- end }}
+
+{{/*
+PostgreSQL resource labels.
+*/}}
+{{- define "zipline.postgresqlLabels" -}}
+helm.sh/chart: {{ include "zipline.chart" . }}
+{{ include "zipline.postgresqlSelectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/part-of: zipline
+app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*

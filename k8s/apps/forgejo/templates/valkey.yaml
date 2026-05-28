@@ -33,6 +33,7 @@ spec:
   template:
     metadata:
       labels:
+        {{- include "forgejo-stack.labels" . | nindent 8 }}
         {{- include "forgejo-stack.valkeySelectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.valkey.podSecurityContext }}
