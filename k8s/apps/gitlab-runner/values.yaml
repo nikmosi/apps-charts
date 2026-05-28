@@ -29,7 +29,7 @@ metrics:
   enabled: true
   podMonitor:
     enabled: true
-    interval: 30s
+    interval: 60s
     path: /metrics
 
 rbac:

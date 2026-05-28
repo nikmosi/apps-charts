@@ -40,7 +40,7 @@ service:
 
 serviceMonitor:
   enabled: true
-  interval: 30s
+  interval: 60s
   scrapeTimeout: 10s
   path: /metrics
   labels: {}

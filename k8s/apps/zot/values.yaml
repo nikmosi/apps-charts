@@ -418,7 +418,7 @@ metrics:
     # Start a ServiceMonitor for Prometheus Operator
     enabled: true
     # Specify the interval at which metrics should be scraped
-    interval: "30s"
+    interval: "60s"
     # Specify the path to scrape metrics from
     path: "/metrics"
     basicAuth: null

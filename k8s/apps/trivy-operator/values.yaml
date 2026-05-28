@@ -57,7 +57,7 @@ serviceMonitor:
   # -- The namespace where Prometheus expects to find service monitors
   namespace: ~
   # -- Interval at which metrics should be scraped. If not specified Prometheus’ global scrape interval is used.
-  interval: 30s
+  interval: 60s
   # -- Additional annotations for the serviceMonitor
   annotations: {}
   # -- Additional labels for the serviceMonitor
