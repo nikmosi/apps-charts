@@ -102,7 +102,7 @@ spec:
     - metadata:
         name: cache
         labels:
-          {{- include "ntfy.labels" . | nindent 10 }}
+          {{- include "ntfy.volumeClaimLabels" . | nindent 10 }}
       spec:
         accessModes:
           {{- toYaml .Values.persistence.accessModes | nindent 10 }}
