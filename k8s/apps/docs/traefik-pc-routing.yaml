@@ -15,6 +15,12 @@ kind: Service
 metadata:
   name: pc-docs-service
   namespace: apps-docs
+  labels:
+    app.kubernetes.io/name: pc-docs
+    app.kubernetes.io/instance: docs
+    app.kubernetes.io/component: service
+    app.kubernetes.io/part-of: docs
+    app.kubernetes.io/managed-by: kubectl
 spec:
   ports:
     - name: http
@@ -28,6 +34,12 @@ kind: Endpoints
 metadata:
   name: pc-docs-service
   namespace: apps-docs
+  labels:
+    app.kubernetes.io/name: pc-docs
+    app.kubernetes.io/instance: docs
+    app.kubernetes.io/component: endpoints
+    app.kubernetes.io/part-of: docs
+    app.kubernetes.io/managed-by: kubectl
 subsets:
   - addresses:
       - ip: 192.168.3.2
@@ -41,6 +53,12 @@ kind: Ingress
 metadata:
   name: docs-xinfra-ingress
   namespace: apps-docs
+  labels:
+    app.kubernetes.io/name: pc-docs
+    app.kubernetes.io/instance: docs
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: docs
+    app.kubernetes.io/managed-by: kubectl
 spec:
   ingressClassName: traefik
   rules:
@@ -65,6 +83,12 @@ kind: Ingress
 metadata:
   name: auth-xinfra-ingress
   namespace: apps-docs
+  labels:
+    app.kubernetes.io/name: pc-docs
+    app.kubernetes.io/instance: docs
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: docs
+    app.kubernetes.io/managed-by: kubectl
 spec:
   ingressClassName: traefik
   rules:

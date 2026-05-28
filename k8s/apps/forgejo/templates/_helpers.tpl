@@ -33,7 +33,6 @@ Common labels.
 */}}
 {{- define "forgejo-stack.labels" -}}
 helm.sh/chart: {{ include "forgejo-stack.chart" . }}
-app.kubernetes.io/name: {{ include "forgejo-stack.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}

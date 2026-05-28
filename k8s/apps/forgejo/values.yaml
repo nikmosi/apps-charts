@@ -310,7 +310,12 @@ forgejo:
     size: 50Gi
     accessModes:
       - ReadWriteOnce
-    labels: {}
+    labels:
+      app.kubernetes.io/name: forgejo
+      app.kubernetes.io/instance: forgejo
+      app.kubernetes.io/component: storage
+      app.kubernetes.io/part-of: forgejo
+      app.kubernetes.io/managed-by: Helm
     storageClass:
     subPath:
     volumeName: ""
