@@ -10,6 +10,9 @@ operator:
   # -- scanJobsConcurrentLimit the maximum number of scan jobs create by the operator
   scanJobsConcurrentLimit: 1
 
+  # Use the chart-managed Trivy server so scan jobs share a single DB/cache.
+  builtInTrivyServer: true
+
   resources:
     requests:
       cpu: 100m
@@ -64,6 +67,10 @@ serviceMonitor:
   # -- EndpointAdditionalProperties allows setting additional properties on the endpoint such as relabelings, metricRelabelings etc.
   endpointAdditionalProperties: {}
 
+trivyOperator:
+  # Avoid client-side secret scan cache/temp-file races in multi-init workloads.
+  skipInitContainers: true
+
 trivy:
   # -- createConfig indicates whether to create config objects
   createConfig: true
@@ -83,7 +90,7 @@ trivy:
 
   # -- mode is the Trivy client mode. Either Standalone or ClientServer. Depending
   # on the active mode other settings might be applicable or required.
-  mode: Standalone
+  mode: ClientServer
 
   # -- sbomSources trivy will try to retrieve SBOM from the specified sources (oci,rekor)
   sbomSources: ""
