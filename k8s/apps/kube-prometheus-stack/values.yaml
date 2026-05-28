@@ -206,11 +206,12 @@ prometheus:
   prometheusSpec:
     replicas: 1
     shards: 1
-    scrapeInterval: 30s
+    scrapeInterval: 60s
     scrapeTimeout: 10s
-    evaluationInterval: 30s
-    retention: 15d
-    retentionSize: 18GiB
+    evaluationInterval: 60s
+    # Retention is capped by both time and disk usage; whichever is hit first wins.
+    retention: 90d
+    retentionSize: 16GiB
     walCompression: true
 
     ruleSelectorNilUsesHelmValues: false
@@ -235,10 +236,10 @@ prometheus:
 
     resources:
       requests:
-        cpu: 150m
-        memory: 768Mi
+        cpu: 100m
+        memory: 512Mi
       limits:
-        memory: 2Gi
+        memory: 1536Mi
 
     storageSpec:
       volumeClaimTemplate:
