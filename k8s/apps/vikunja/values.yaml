@@ -1,5 +1,7 @@
 ---
 vikunja:
+  image:
+    tag: "2.3.0"
   env:
     TZ: Asia/Novosibirsk
   configMaps:

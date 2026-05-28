@@ -3,6 +3,9 @@ locustfile:
   sourcePath: "main.py"
 
 locust:
+  image:
+    tag: 2.44.0
+
   extraLabels:
     app.kubernetes.io/part-of: locust
 
