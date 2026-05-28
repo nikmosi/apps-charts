@@ -317,7 +317,6 @@ secretFiles:
   # Managed credentials for the Zot registry.
   htpasswd: |-
     nikmosi:$2y$05$udMmSLfbwVkLbSQWg5ir5.HBAmrj64GcMm2DfearRCjQ5YKISJm8G
-    other:$2y$05$4Kmi7p3t/DZ49LaV6g31OOaofIAPuYZ8daUwXMudhDrgjoRhT3qdi
   # Optional auth for upstream mirrors. Empty object keeps the file valid JSON.
   sync-auth.json: |-
     {}
