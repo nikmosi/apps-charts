@@ -92,7 +92,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: auth.xinfra.ru
+    - host: auth2.xinfra.ru
       http:
         paths:
           - path: /
@@ -104,5 +104,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - auth.xinfra.ru
+        - auth2.xinfra.ru
       secretName: wildcard-xinfra-ru-tls
