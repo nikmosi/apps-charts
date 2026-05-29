@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lldap-bootstrap-groups
+  namespace: apps-lldap
+data:
+  admins.json: |
+    {"name":"admins"}
+  grafana-admins.json: |
+    {"name":"Grafana Admins"}
+  grafana-editors.json: |
+    {"name":"Grafana Editors"}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lldap-bootstrap-users
+  namespace: apps-lldap
+data:
+  authelia.json: |
+    {
+      "id": "authelia",
+      "email": "authelia@xinfra.ru",
+      "displayName": "Authelia LDAP Bind",
+      "groups": ["lldap_strict_readonly"],
+      "password_file": "/bootstrap/secrets/authelia-bind-password"
+    }
+  nikmosi.json: |
+    {
+      "id": "nikmosi",
+      "email": "nikmosi@xinfra.ru",
+      "displayName": "nikmosi",
+      "groups": ["admins", "Grafana Admins", "Grafana Editors"],
+      "password_file": "/bootstrap/secrets/nikmosi-password"
+    }

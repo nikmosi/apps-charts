@@ -1,0 +1,62 @@
+---
+replicaCount: 1
+
+image:
+  registry: ghcr.io
+  repository: lldap/lldap
+  pullPolicy: IfNotPresent
+  tag: "2026-01-06-alpine"
+
+serviceAccount:
+  create: true
+  automount: false
+
+secret:
+  create: false
+  existingSecret: lldap-secrets
+
+persistence:
+  enabled: true
+  size: 1Gi
+  accessModes:
+    - ReadWriteOnce
+
+env:
+  TZ: "Asia/Novosibirsk"
+  GID: "1000"
+  UID: "1000"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  privileged: false
+  runAsUser: 1000
+  runAsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+service:
+  type: ClusterIP
+  ldap_port: 3890
+  ldaps_port: 6360
+  http_port: 17170
+  ldaps_enabled: false
+
+ingress:
+  enabled: false

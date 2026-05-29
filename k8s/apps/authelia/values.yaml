@@ -61,6 +61,10 @@ persistence:
 secret:
   disabled: false
   additionalSecrets:
+    authelia-ldap:
+      items:
+        - key: password
+          path: password
     authelia-users:
       path: users
       items:
@@ -184,9 +188,23 @@ configMap:
       disable: false
     refresh_interval: 5 minutes
     ldap:
-      enabled: false
-    file:
       enabled: true
+      implementation: lldap
+      address: ldap://lldap.apps-lldap.svc.cluster.local:3890
+      timeout: 5 seconds
+      start_tls: false
+      pooling:
+        enable: false
+        count: 5
+        retries: 2
+        timeout: 10 seconds
+      base_dn: dc=xinfra,dc=ru
+      user: uid=authelia,ou=people,dc=xinfra,dc=ru
+      password:
+        secret_name: authelia-ldap
+        path: password
+    file:
+      enabled: false
       path: /secrets/users/users_database.yml
       watch: true
       search:

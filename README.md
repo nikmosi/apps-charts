@@ -9,6 +9,18 @@ kubectl apply -f k8s/infra/certs/03-wildcard-xinfra-ru-certificate.yaml
 helm upgrade --install cert-manager oci://quay.io/jetstack/charts/cert-manager -n cert-manager -f k8s/infra/cert-manager/values.yaml
 helm upgrade --install reflector emberstack/reflector -n reflector -f k8s/infra/reflector/values.yaml
 
+kubectl create namespace apps-lldap --dry-run=client -o yaml | kubectl apply -f -
+kubectl get secret lldap-secrets -n apps-lldap >/dev/null 2>&1 || kubectl -n apps-lldap create secret generic lldap-secrets --from-literal=lldap-jwt-secret="$(head -c 48 /dev/urandom | base64 | tr -d '\n')" --from-literal=lldap-ldap-user-pass="$(head -c 24 /dev/urandom | base64 | tr -d '\n')" --from-literal=base-dn='dc=xinfra,dc=ru'
+kubectl get secret lldap-user-passwords -n apps-lldap >/dev/null 2>&1 || kubectl -n apps-lldap create secret generic lldap-user-passwords --from-literal=authelia-bind-password="$(head -c 24 /dev/urandom | base64 | tr -d '\n')" --from-literal=nikmosi-password="$(head -c 24 /dev/urandom | base64 | tr -d '\n')"
+helm upgrade --install lldap oci://ghcr.io/alexmorbo/helm-charts/lldap --version 1.0.8 -n apps-lldap --create-namespace -f k8s/apps/lldap/values.yaml
+kubectl apply -f k8s/apps/lldap/ingress.yaml
+kubectl apply -f k8s/apps/lldap/bootstrap-config.yaml
+kubectl delete job lldap-bootstrap -n apps-lldap --ignore-not-found
+kubectl apply -f k8s/apps/lldap/bootstrap-job.yaml
+kubectl wait --for=condition=complete job/lldap-bootstrap -n apps-lldap --timeout=120s
+
+kubectl create namespace apps-authelia --dry-run=client -o yaml | kubectl apply -f -
+kubectl get secret authelia-ldap -n apps-authelia >/dev/null 2>&1 || kubectl -n apps-authelia create secret generic authelia-ldap --from-literal=password="$(kubectl get secret lldap-user-passwords -n apps-lldap -o jsonpath='{.data.authelia-bind-password}' | base64 -d)"
 helm upgrade --install authelia authelia/authelia -n apps-authelia -f k8s/apps/authelia/values.yaml
 helm upgrade --install adguard k8s/apps/adguard -n apps-adguard --create-namespace
 helm upgrade --install dozzle k8s/apps/dozzle -n monitoring
