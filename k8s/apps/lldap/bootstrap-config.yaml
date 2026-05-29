@@ -11,6 +11,12 @@ data:
     {"name":"Grafana Admins"}
   grafana-editors.json: |
     {"name":"Grafana Editors"}
+  zot-admins.json: |
+    {"name":"zot-admins"}
+  zot-readonly.json: |
+    {"name":"zot-readonly"}
+  zot-users.json: |
+    {"name":"zot-users"}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -26,11 +32,27 @@ data:
       "groups": ["lldap_strict_readonly"],
       "password_file": "/bootstrap/secrets/authelia-bind-password"
     }
+  forgejo.json: |
+    {
+      "id": "forgejo",
+      "email": "forgejo@xinfra.ru",
+      "displayName": "Forgejo",
+      "groups": ["zot-users"],
+      "password_file": "/bootstrap/secrets/forgejo-password"
+    }
   nikmosi.json: |
     {
       "id": "nikmosi",
       "email": "nikmosi@xinfra.ru",
       "displayName": "nikmosi",
-      "groups": ["admins", "Grafana Admins", "Grafana Editors"],
+      "groups": ["admins", "Grafana Admins", "Grafana Editors", "zot-admins", "zot-users"],
       "password_file": "/bootstrap/secrets/nikmosi-password"
+    }
+  zot-reader.json: |
+    {
+      "id": "zot-reader",
+      "email": "zot-reader@xinfra.ru",
+      "displayName": "Zot Readonly",
+      "groups": ["zot-readonly"],
+      "password_file": "/bootstrap/secrets/zot-reader-password"
     }

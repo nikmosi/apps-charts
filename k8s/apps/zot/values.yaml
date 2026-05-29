@@ -169,6 +169,19 @@ configFiles:
           "docker2s2"
         ],
         "auth": {
+          "ldap": {
+            "credentialsFile": "/etc/zot/ldap/config-ldap-credentials.json",
+            "address": "lldap.apps-lldap.svc.cluster.local",
+            "port": 3890,
+            "insecure": true,
+            "startTLS": false,
+            "baseDN": "ou=people,dc=xinfra,dc=ru",
+            "userAttribute": "uid",
+            "userFilter": "",
+            "userGroupAttribute": "memberOf",
+            "skipVerify": false,
+            "subtreeSearch": true
+          },
           "openid": {
             "providers": {
               "oidc": {
@@ -188,9 +201,34 @@ configFiles:
           "failDelay": 3
         },
         "accessControl": {
+          "repositories": {
+            "**": {
+              "policies": [
+                {
+                  "groups": [
+                    "cn=zot-readonly,ou=groups,dc=xinfra,dc=ru"
+                  ],
+                  "actions": [
+                    "read"
+                  ]
+                },
+                {
+                  "groups": [
+                    "cn=zot-users,ou=groups,dc=xinfra,dc=ru"
+                  ],
+                  "actions": [
+                    "read",
+                    "create",
+                    "update"
+                  ]
+                }
+              ],
+              "defaultPolicy": []
+            }
+          },
           "adminPolicy": {
-            "users": [
-              "nikmosi", "other"
+            "groups": [
+              "cn=zot-admins,ou=groups,dc=xinfra,dc=ru"
             ],
             "actions": [
               "read",
@@ -307,6 +345,8 @@ configFiles:
 externalSecrets:
   - secretName: "oidc-credentials"
     mountPath: "/etc/zot/oidc"
+  - secretName: "zot-ldap"
+    mountPath: "/etc/zot/ldap"
 # If mountSecret is true, the Secret named $CHART_RELEASE-secret is mounted on
 # the pod's '/secret' directory (it is used to keep files with passwords, like
 # a `htpasswd` file)
