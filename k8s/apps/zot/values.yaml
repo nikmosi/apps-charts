@@ -188,7 +188,7 @@ configFiles:
                 "credentialsFile": "/etc/zot/oidc/oidc-credentials.json",
                 "issuer": "https://auth.xinfra.ru",
                 "keypath": "",
-                "scopes": ["openid", "profile", "email"],
+                "scopes": ["openid", "profile", "email", "groups"],
                 "claimMapping": {
                   "username": "preferred_username"
                 }
@@ -206,7 +206,11 @@ configFiles:
               "policies": [
                 {
                   "groups": [
-                    "cn=zot-readonly,ou=groups,dc=xinfra,dc=ru"
+                    "cn=zot-readonly,ou=groups,dc=xinfra,dc=ru",
+                    "zot-readonly"
+                  ],
+                  "users": [
+                    "zot-reader"
                   ],
                   "actions": [
                     "read"
@@ -214,7 +218,11 @@ configFiles:
                 },
                 {
                   "groups": [
-                    "cn=zot-users,ou=groups,dc=xinfra,dc=ru"
+                    "cn=zot-users,ou=groups,dc=xinfra,dc=ru",
+                    "zot-users"
+                  ],
+                  "users": [
+                    "forgejo"
                   ],
                   "actions": [
                     "read",
@@ -227,8 +235,12 @@ configFiles:
             }
           },
           "adminPolicy": {
+            "users": [
+              "nikmosi"
+            ],
             "groups": [
-              "cn=zot-admins,ou=groups,dc=xinfra,dc=ru"
+              "cn=zot-admins,ou=groups,dc=xinfra,dc=ru",
+              "zot-admins"
             ],
             "actions": [
               "read",

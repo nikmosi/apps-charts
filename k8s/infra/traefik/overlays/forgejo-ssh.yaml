@@ -10,6 +10,11 @@ spec:
       - name: TZ
         value: Asia/Novosibirsk
     ports:
+      websecure:
+        transport:
+          respondingTimeouts:
+            readTimeout: 10m
+            writeTimeout: 10m
       forgejo-ssh:
         port: 8022
         expose:
