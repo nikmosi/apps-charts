@@ -201,6 +201,11 @@ configFiles:
           "failDelay": 3
         },
         "accessControl": {
+          "metrics": {
+            "users": [
+              "prometheus"
+            ]
+          },
           "repositories": {
             "**": {
               "policies": [
@@ -369,6 +374,7 @@ secretFiles:
   # Managed credentials for the Zot registry.
   htpasswd: |-
     nikmosi:$2y$05$udMmSLfbwVkLbSQWg5ir5.HBAmrj64GcMm2DfearRCjQ5YKISJm8G
+    prometheus:$2y$05$3XcE2UcSY7VtKNuNWXWE6O/TBy50IyLa593e56QV2D1H.WwGGu7cS
   # Optional auth for upstream mirrors. Empty object keeps the file valid JSON.
   sync-auth.json: |-
     {}
@@ -473,7 +479,10 @@ metrics:
     interval: "60s"
     # Specify the path to scrape metrics from
     path: "/metrics"
-    basicAuth: null
+    basicAuth:
+      secretName: zot-metrics-basic-auth
+      usernameKey: username
+      passwordKey: password
 # Test hooks configuration
 test:
   image:
