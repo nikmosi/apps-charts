@@ -31,7 +31,7 @@ service:
     type: LoadBalancer
     loadBalancerIP: ""
     annotations: {}
-    externalTrafficPolicy: Cluster
+    externalTrafficPolicy: Local
     port: 53
     encryptedPort: 853
   ui:

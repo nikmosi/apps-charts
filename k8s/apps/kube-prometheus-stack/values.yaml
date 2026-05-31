@@ -317,6 +317,7 @@ extraManifests:
         import json
         import os
         import urllib.error
+        import urllib.parse
         import urllib.request
         from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -324,6 +325,11 @@ extraManifests:
         NTFY_URL = os.environ.get("NTFY_URL", "http://ntfy.apps-ntfy.svc.cluster.local/")
         NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "grafana")
         TOKEN_FILE = os.environ.get("NTFY_TOKEN_FILE", "/etc/ntfy-token/token")
+        GRAFANA_URL = os.environ.get("GRAFANA_URL", "https://grafana.xinfra.ru").rstrip("/")
+        GRAFANA_DATASOURCE_UID = os.environ.get("GRAFANA_DATASOURCE_UID", "prometheus")
+        GRAFANA_ORG_ID = os.environ.get("GRAFANA_ORG_ID", "1")
+        GRAFANA_RANGE_FROM = os.environ.get("GRAFANA_RANGE_FROM", "now-1h")
+        GRAFANA_RANGE_TO = os.environ.get("GRAFANA_RANGE_TO", "now")
 
 
         def read_token():
@@ -406,11 +412,48 @@ extraManifests:
             return "\n\n---\n\n".join(parts)
 
 
+        def prometheus_expr(generator_url):
+            if not generator_url:
+                return ""
+            query = urllib.parse.parse_qs(urllib.parse.urlparse(generator_url).query)
+            values = query.get("g0.expr") or query.get("query") or query.get("expr") or []
+            return values[0] if values else ""
+
+
+        def grafana_explore_url(expr):
+            pane = {
+                "datasource": GRAFANA_DATASOURCE_UID,
+                "queries": [
+                    {
+                        "refId": "A",
+                        "datasource": {
+                            "uid": GRAFANA_DATASOURCE_UID,
+                            "type": "prometheus",
+                        },
+                        "expr": expr,
+                        "range": True,
+                    }
+                ],
+                "range": {
+                    "from": GRAFANA_RANGE_FROM,
+                    "to": GRAFANA_RANGE_TO,
+                },
+            }
+            panes = urllib.parse.quote(json.dumps({"default": pane}, separators=(",", ":")))
+            return f"{GRAFANA_URL}/explore?panes={panes}&schemaVersion=1&orgId={GRAFANA_ORG_ID}"
+
+
         def click(alerts):
             if not alerts:
-                return ""
+                return f"{GRAFANA_URL}/alerting/list"
             first = alerts[0]
-            return first.get("generatorURL") or annotation(first, "runbook_url")
+            explicit_url = annotation(first, "grafana_url")
+            if explicit_url:
+                return explicit_url
+            expr = prometheus_expr(first.get("generatorURL"))
+            if expr:
+                return grafana_explore_url(expr)
+            return annotation(first, "runbook_url") or f"{GRAFANA_URL}/alerting/list"
 
 
         def publish(payload):
@@ -509,6 +552,16 @@ extraManifests:
                   value: grafana
                 - name: NTFY_TOKEN_FILE
                   value: /etc/ntfy-token/token
+                - name: GRAFANA_URL
+                  value: https://grafana.xinfra.ru
+                - name: GRAFANA_DATASOURCE_UID
+                  value: prometheus
+                - name: GRAFANA_ORG_ID
+                  value: "1"
+                - name: GRAFANA_RANGE_FROM
+                  value: now-1h
+                - name: GRAFANA_RANGE_TO
+                  value: now
               ports:
                 - name: http
                   containerPort: 8080
