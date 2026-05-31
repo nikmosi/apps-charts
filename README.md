@@ -28,6 +28,12 @@ helm upgrade --install forgejo k8s/apps/forgejo -n apps-forgejo
 helm upgrade --install goldilocks fairwinds-stable/goldilocks -n apps-goldilocks -f k8s/apps/goldilocks/values.yaml
 helm upgrade --install kube-prometheus-stack oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack -n apps-kube-prometheus-stack -f k8s/apps/kube-prometheus-stack/values.yaml
 helm upgrade --install ntfy k8s/apps/ntfy -n apps-ntfy
+kubectl create namespace crowdsec --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n apps-ntfy exec statefulset/ntfy -- sh -c 'NTFY_PASSWORD="$(head -c 24 /dev/urandom | base64 | tr -d "\n")" ntfy user add --ignore-exists crowdsec'
+kubectl -n apps-ntfy exec statefulset/ntfy -- ntfy access crowdsec alerts-crowdsec write-only
+kubectl get secret crowdsec-ntfy-token -n crowdsec >/dev/null 2>&1 || kubectl -n crowdsec create secret generic crowdsec-ntfy-token --from-literal=NTFY_TOKEN="$(kubectl -n apps-ntfy exec statefulset/ntfy -- ntfy token add --label crowdsec crowdsec | sed -n 's/.*\(tk_[A-Za-z0-9]*\).*/\1/p' | tail -n 1)"
+kubectl get secret crowdsec-keys -n crowdsec >/dev/null 2>&1 || kubectl -n crowdsec create secret generic crowdsec-keys --from-literal=ENROLL_KEY="${CROWDSEC_ENROLL_KEY:?Set CROWDSEC_ENROLL_KEY from CrowdSec Console}"
+helm upgrade --install crowdsec crowdsec/crowdsec --version 0.24.0 -n crowdsec -f k8s/apps/crowdsec/values.yaml
 helm upgrade --install trivy-operator aqua/trivy-operator -n trivy-system -f k8s/apps/trivy-operator/values.yaml
 helm upgrade --install vaultwarden vaultwarden/vaultwarden -n apps-warden -f k8s/apps/vaultwarden/values.yaml
 helm upgrade --install vikunja oci://ghcr.io/go-vikunja/helm-chart/vikunja -n apps-vikunja -f k8s/apps/vikunja/values.yaml
