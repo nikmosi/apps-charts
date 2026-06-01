@@ -1,0 +1,129 @@
+---
+replicaCount: 1
+
+image:
+  repository: ghcr.io/mealie-recipes/mealie
+  tag: "v3.19.2"
+  digest: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: mealie
+
+revisionHistoryLimit: 3
+progressDeadlineSeconds: 600
+terminationGracePeriodSeconds: 30
+
+strategy:
+  type: Recreate
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+service:
+  name: mealie
+  type: ClusterIP
+  port: 9000
+  targetPort: http
+  annotations: {}
+
+containerPort: 9000
+
+ingress:
+  enabled: true
+  name: mealie-ingress
+  className: traefik
+  annotations: {}
+  hosts:
+    - host: mealie.xinfra.ru
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - mealie.xinfra.ru
+      secretName: wildcard-xinfra-ru-tls
+
+mealie:
+  env:
+    ALLOW_SIGNUP: "false"
+    PUID: "1000"
+    PGID: "1000"
+    TZ: "Asia/Novosibirsk"
+    BASE_URL: "https://mealie.xinfra.ru"
+  extraEnv: []
+  envFrom: []
+
+persistence:
+  enabled: true
+  claimName: mealie-data
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi
+  mountPath: /app/data
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 1000
+  fsGroupChangePolicy: OnRootMismatch
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1000Mi
+
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /api/app/about
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /api/app/about
+    port: http
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+startupProbe:
+  enabled: true
+  httpGet:
+    path: /api/app/about
+    port: http
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 30
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+networkPolicy:
+  enabled: false
+  ingress: []
+  egress: []

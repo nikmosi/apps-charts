@@ -1,0 +1,14 @@
+Mealie has been rendered.
+
+{{- if .Values.ingress.enabled }}
+Ingress:
+{{- range .Values.ingress.hosts }}
+  https://{{ .host }}
+{{- end }}
+{{- else }}
+Port-forward:
+  kubectl port-forward svc/{{ .Values.service.name }} 9000:{{ .Values.service.port }}
+{{- end }}
+
+Data PVC:
+  {{ .Values.persistence.claimName }}

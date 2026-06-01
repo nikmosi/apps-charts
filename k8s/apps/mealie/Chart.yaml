@@ -1,0 +1,15 @@
+---
+apiVersion: v2
+name: mealie
+description: Deploy Mealie recipe manager on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "v3.19.2"
+kubeVersion: ">=1.24.0-0"
+keywords:
+  - recipes
+  - meal-planning
+  - mealie
+home: https://mealie.io/
+sources:
+  - https://github.com/mealie-recipes/mealie
