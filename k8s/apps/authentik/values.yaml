@@ -1,10 +1,13 @@
 ---
 authentik:
-  secret_key: "x8gN3vlObrSzpzPEgvGlDkhgMMksyDsaZqoCQeveyOspSTkuuGcUEMu0Hwah7HOHMjmNubn/6H2E/nT7"
+  existingSecret:
+    secretName: authentik-config
   error_reporting:
     enabled: false
   postgresql:
-    password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
+    host: "{{ .Release.Name }}-postgresql"
+    name: authentik
+    user: authentik
 
 global:
   env:
@@ -31,7 +34,12 @@ server:
 postgresql:
   enabled: true
   auth:
-    password: "jS2b+4dOzSI,M$>}vE/XN0!Z|#v>W\\T'"
+    username: authentik
+    database: authentik
+    existingSecret: authentik-postgresql
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
   primary:
     extraEnvVars:
       - name: POSTGRES_DB

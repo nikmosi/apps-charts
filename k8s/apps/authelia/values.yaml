@@ -65,11 +65,15 @@ secret:
       items:
         - key: password
           path: password
-    authelia-users:
+    authelia-users-external:
       path: users
       items:
         - key: users_database.yml
           path: users_database.yml
+    authelia-core:
+      path: authelia-core
+    authelia-oidc:
+      path: authelia-oidc
 
 configMap:
   theme: dark
@@ -251,7 +255,8 @@ configMap:
     inactivity: 10 minutes
     remember_me: 1 month
     encryption_key:
-      value: 5a5904fc37d5ef47a46622b75fbe107860b53def976df1a517e664b6e6ccdc0e
+      secret_name: authelia-core
+      path: session.encryption.key
     cookies:
       - domain: xinfra.ru
         subdomain: auth
@@ -270,7 +275,8 @@ configMap:
 
   storage:
     encryption_key:
-      value: b9fb3e2366194044a2025d2a766119f0937f7f00683be3fbcce3ebf5c26f7d06
+      secret_name: authelia-core
+      path: storage.encryption.key
     local:
       enabled: true
       path: /config/db.sqlite3
@@ -291,7 +297,8 @@ configMap:
     oidc:
       enabled: true
       hmac_secret:
-        value: 44a47c39f25104e7be72faa898ff3750a0832a8ad86e2661e3062940b30c1f76
+        secret_name: authelia-core
+        path: identity_providers.oidc.hmac.key
       lifespans:
         access_token: 1 hour
         refresh_token: 8 hours
@@ -345,34 +352,7 @@ configMap:
           algorithm: RS256
           use: sig
           key:
-            value: |
-              -----BEGIN RSA PRIVATE KEY-----
-              MIIEowIBAAKCAQEA6TI/LkfX0xrMgs5QtVsuTr0GzKVTVSnbkyZ7piR/tlvq+qyt
-              AL1A8qUuzcFTXHe3NdRAOQazHwx1nKF1hg+LDGEHNxr8hF/hTsfoFqfMKTpfCkGN
-              WG/8uu7LaeAMOWSrov94yzgJP11bFGpkdbMGycsn9RNRv+BbwJQdQCspBG79sW1t
-              CzPwShyidUXsob6gKtSwk0YEfoWcIHK8j0aiK5qQ/6QCoevYo+n1F2atnXsCgoUL
-              YeQTvULnBgf0N5W2mTIn1qXLGkmDCl4vVGzGX/glRA7uZTxALmph1HDMEa18IJZL
-              R4IIc2FLj2zPLihjUaePWUcFrZFa0CWjBa/aVQIDAQABAoIBADVf3RKyem108ZDR
-              +Kqd2VpHzS3bfFieiUWjtgL30Sxz2vNvwPRNnPc8xBrvkC02sH43W9DBng9x+lx0
-              nzHlTlnxvmVIPbptuKPfwRkoZGQeWmD+UoQGs9W0cOYFlD6xslBPQX5gD8vLShzA
-              4kgHRzs6TuW6+4fbqhyIui41AsEi13e4WyNaMazkLb6yZGBYUS4NEdgFjjb3MNvU
-              R+l493YHx7UzLtJnrxkpCh4sx3UAnUnwilPs44ZMmyZQ9YV5vMgY8hU8dFE0lvAv
-              2idMbV0OcP6cVI+vCE9l4mweZd3FBI+rDM6Na9wWnPUtxdtMT/hUaHavFUdUgtNY
-              Yi4/d5ECgYEA+nvcQ7Vvj2g/nGJtWRW0WICFdeoZA1eXtEM62FKjH0n2w+tR5WBv
-              qh3Od+gxIA/m7AcVJw6qXTpSpCvu/NQUKs4Y8fO8JhjFME4tvoXMwQ9I9IrCc7W8
-              T4LBit5+u/8NRs9N1NfR1kEkE98q9MhhQ8BCBN8dNJPvkZ7M87H/VIUCgYEA7lTs
-              3aaNvoURQeBYH/67QgXXPLlsufE10WMqbAv8CjwknTRJt52O4L4Bhrq5b3f/LtSp
-              vPQbRYmP88Amh0OAjUSlSLUeYPa7hrXYFzkeMJQnxIjtVMsuCeVWGK3VqiHkx5Tu
-              qxWWMDvDPBqNH7CszoAOFWEAn5rWLDs+4UuHf5ECgYBakBPISz4lnGx7Tz732ZgV
-              84nNYzFd+vp3i2MoOWCO/IACv/8hLqfQ2uv+gG3aiMVWCw2DzJKeGGsuvk+vC8Kq
-              408zk4swPv50g5+YZens12jqOY0qpseJ+92cJuutbv7O3j7muI0+qNixcpumWxiH
-              lWiJOF3n16DjhoXVikKlvQKBgQCPT6He5nf1SC7IXg6frp0LZle2vAkVBmZGMksg
-              DVTRErkxjm+Faciwe5CPY1h+Hrnjfx1R8bc0aTOWbsS8MWrrh4ub3M0XoUXCCzaV
-              QFNXAr+m/m83vbVBXhYXYPBKDXd0S6n4VlKpTkZnrc+Obr56raXKVTn6vzBqCHYX
-              I0OnAQKBgCiBmYBvRyEmoXjwlvgftaXZWz0BFE/cOOv3uFZghED3zI4WSf8/pyFX
-              Cd6ZcpHGh/NhQQaNv5JIgCuawuPqxxLB/v14Ribrllhhr6y5m8Z6jQvdxdOzj/NT
-              siAYtbhFn0FZiA5dMgVFsZmEGNJVsUQauFdRQc6hcHRFQp0+alyj
-              -----END RSA PRIVATE KEY-----
+            path: /secrets/authelia-oidc/jwks.authelia-rs256-2026-05.pem
       cors:
         endpoints: []
         allowed_origins: []
@@ -381,7 +361,7 @@ configMap:
         - client_id: grafana
           client_name: Grafana
           client_secret:
-            value: $plaintext$3fEmKosUzSDkzOFy6emFRapuMGJIxlW70s5qRadiR_Gs-aeZg6s56qmGK6Z-Tqr-
+            path: /secrets/authelia-oidc/grafana-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: grafana
@@ -406,7 +386,7 @@ configMap:
         - client_id: forgejo
           client_name: Forgejo
           client_secret:
-            value: $plaintext$U8nzI1gk8OqVWEt2TgsJpNWlUXcRr7L7mm6hDsHrrUqfJkQ0lhlG_Zmg9YKGI8mE
+            path: /secrets/authelia-oidc/forgejo-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: default
@@ -427,7 +407,7 @@ configMap:
         - client_id: 9GaHg9eweQN8edJ1J4Ox205V5EkktTM907jGjzrb
           client_name: Vikunja
           client_secret:
-            value: $plaintext$4Hp28B8Xc4NPRRFQcbHwby9rRjUZLBIxMDtW08qRJA3Zcs8q0pU0Nvgi4CWgO57Isv6UyAKytwaVhO6DUVTjnvkJG9Kz3dDXsS2v8t7zz9D86JAFLsKpx7ECZU8yxnFe
+            path: /secrets/authelia-oidc/vikunja-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: default
@@ -449,7 +429,7 @@ configMap:
         - client_id: GF5EXFDkYc1wzKOVEZXI4LHAOevsPz7J7g1ag95Y
           client_name: Vaultwarden
           client_secret:
-            value: $plaintext$2NXgQJppwSFyptbWyXfCM4EZh2PBDeIrYK6Xibt7J2nFDMOxka4jSfhPaLBwp4H8e1L3ILbaIDMJ1QrY72EMItwcFrglDRH8mIhnWA4kpLqNphivfXi9hq2YWtfwp3wg
+            path: /secrets/authelia-oidc/vaultwarden-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: default
@@ -473,7 +453,7 @@ configMap:
         - client_id: PKNtTDqi5REDQYuUiIMScLAtQNnCeDTMglxhU04I
           client_name: zot
           client_secret:
-            value: $plaintext$KJbBsSUJzpXZX6EZQAtIPD8GrkunSJMuG8J6wRZdWONhGaPHHEfRBQmIxO6MNFpS44dlgKFQ4nWVU78kDQRT6M34rL3gpBbqb4cibFD8AhwoxLouYjqZPl1mawfzy2Cy
+            path: /secrets/authelia-oidc/zot-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: default
@@ -494,7 +474,7 @@ configMap:
         - client_id: zipline
           client_name: Zipline
           client_secret:
-            value: $plaintext$C3h3OdzeOaQVU0Zl7rNAGgcKxqFSYkpX35eMURe0Ns8CQjsnR1J2bPUKdqiBYHAn
+            path: /secrets/authelia-oidc/zipline-client-secret
           public: false
           authorization_policy: two_factor
           claims_policy: default
@@ -515,22 +495,4 @@ configMap:
           userinfo_signed_response_alg: none
           token_endpoint_auth_method: client_secret_post
 
-extraObjects:
-  - apiVersion: v1
-    kind: Secret
-    metadata:
-      name: authelia-users
-      namespace: apps-authelia
-    type: Opaque
-    stringData:
-      users_database.yml: |
-        users:
-          nikmosi:
-            disabled: false
-            displayname: nikmosi
-            password: "$6$rounds=50000$8PM8XXtCNuzN2fmO$x1GSGLMOmeCEvRGvStUmfrQ.s5mERfImj1otMXtaHQFN4pnuLSu8WYLE/eVmU4flNUjCxWlkcTH6r3/.Tw.N4/"
-            email: nikmosi@xinfra.ru
-            groups:
-              - admins
-              - "Grafana Admins"
-              - "Grafana Editors"
+extraObjects: []

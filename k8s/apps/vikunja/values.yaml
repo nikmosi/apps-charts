@@ -6,26 +6,7 @@ vikunja:
     TZ: Asia/Novosibirsk
   configMaps:
     config:
-      enabled: true
-      data:
-        config.yml: |
-          service:
-            publicurl: https://vikunja.xinfra.ru
-            enableregistration: false
-          auth:
-            local:
-                enabled: true
-            openid:
-                enabled: true
-                providers:
-                    authelia:
-                        name: "Authelia Login"
-                        usernamefallback: true
-                        emailfallback: true
-                        authurl: https://auth.xinfra.ru
-                        clientid: 9GaHg9eweQN8edJ1J4Ox205V5EkktTM907jGjzrb
-                        clientsecret: 4Hp28B8Xc4NPRRFQcbHwby9rRjUZLBIxMDtW08qRJA3Zcs8q0pU0Nvgi4CWgO57Isv6UyAKytwaVhO6DUVTjnvkJG9Kz3dDXsS2v8t7zz9D86JAFLsKpx7ECZU8yxnFe
-                        scope: openid email profile
+      enabled: false
   resources:
     requests:
       cpu: 15m
@@ -33,6 +14,10 @@ vikunja:
     limits:
       memory: 192Mi
   persistence:
+    config:
+      enabled: true
+      type: secret
+      name: vikunja-config
     data:
       enabled: true
       accessMode: ReadWriteOnce

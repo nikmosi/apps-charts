@@ -364,25 +364,20 @@ externalSecrets:
     mountPath: "/etc/zot/oidc"
   - secretName: "zot-ldap"
     mountPath: "/etc/zot/ldap"
+  - secretName: "zot-secret-external"
+    mountPath: "/secret"
 # If mountSecret is true, the Secret named $CHART_RELEASE-secret is mounted on
 # the pod's '/secret' directory (it is used to keep files with passwords, like
 # a `htpasswd` file)
-mountSecret: true
+mountSecret: false
 # If secretFiles does not exist the user is in charge of managing it, again, if
 # you want to manage it the value has to be added empty to avoid using this one
-secretFiles:
-  # Managed credentials for the Zot registry.
-  htpasswd: |-
-    nikmosi:$2y$05$udMmSLfbwVkLbSQWg5ir5.HBAmrj64GcMm2DfearRCjQ5YKISJm8G
-    prometheus:$2y$05$3XcE2UcSY7VtKNuNWXWE6O/TBy50IyLa593e56QV2D1H.WwGGu7cS
-  # Optional auth for upstream mirrors. Empty object keeps the file valid JSON.
-  sync-auth.json: |-
-    {}
+secretFiles: null
 # Authentication string for Kubernetes probes, which is needed when `htpasswd`
 # authentication is enabled, but the anonymous access policy is not.
 # It contains a `user:password` string encoded in base64. The example value is
 # from running `echo -n "foo:var" | base64`
-authHeader: "bmlrbW9zaTpuaWlERnZmRnNzQVV0MVd0RXJxOU5Qc3k="
+authHeader: ""
 
 # If persistence is 'true' the service uses a persistentVolumeClaim to mount a
 # volume for zot on '/var/lib/registry'; by default the pvc used is named
@@ -560,7 +555,7 @@ test:
 # | pvc.storage | string | `"8Gi"` |  |
 # | pvc.storageClassName | string | `nil` |  |
 # | replicaCount | int | `1` |  |
-# | secretFiles.htpasswd | string | `"admin:$2y$05$vmiurPmJvHylk78HHFWuruFFVePlit9rZWGA/FbZfTEmNRneGJtha\nuser:$2y$05$L86zqQDfH5y445dcMlwu6uHv.oXFgT6AiJCwpv3ehr7idc0rI3S2G"` |  |
+# | secretFiles | object | `null` | Secret files are created externally in the `zot-secret` Kubernetes Secret. |
 # | service.annotations | object | `{}` |  |
 # | service.clusterIP | string | `nil` |  |
 # | service.externalTrafficPolicy | string | `""` |  |
