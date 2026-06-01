@@ -14,8 +14,8 @@ serviceAccount:
 
 resources:
   requests:
-    cpu: 25m
+    cpu: 50m
     memory: 64Mi
   limits:
-    cpu: 100m
+    cpu: 300m
     memory: 128Mi
