@@ -76,12 +76,9 @@ podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
-securityContext:
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false
-  capabilities:
-    drop:
-      - ALL
+# Mealie's container entrypoint starts as root, chowns /app paths, then switches
+# to PUID/PGID. Dropping CHOWN/SETUID/SETGID breaks startup.
+securityContext: {}
 
 resources:
   requests:
