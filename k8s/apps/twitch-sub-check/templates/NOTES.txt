@@ -1,0 +1,17 @@
+Release {{ .Release.Name }} installed chart {{ .Chart.Name }}.
+
+The worker pod runs:
+  {{ include "twitch-sub-check.fullname" . }} {{ join " " .Values.command }} --interval {{ .Values.watch.interval }}
+
+Check rollout status:
+  kubectl rollout status deployment/{{ include "twitch-sub-check.fullname" . }} -n {{ .Release.Namespace }}
+
+Inspect logs:
+  kubectl logs deployment/{{ include "twitch-sub-check.fullname" . }} -n {{ .Release.Namespace }}
+
+{{- if .Values.rabbitmq.enabled }}
+RabbitMQ is deployed as:
+  {{ include "twitch-sub-check.rabbitmqFullname" . }}
+{{- else }}
+RabbitMQ is external. Confirm RABBITMQ_URL is supplied through eventBus.rabbitmq.
+{{- end }}

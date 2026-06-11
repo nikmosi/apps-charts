@@ -1,0 +1,176 @@
+replicaCount: 1
+
+image:
+  repository: "zot.xinfra.ru/twitch-sub-check"
+  tag: "0.1.0"
+  digest: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+command:
+  - "watch"
+
+watch:
+  interval: 300
+
+credentials:
+  existingSecret: ""
+  secretKeys:
+    twitchClientId: "TWITCH_CLIENT_ID"
+    twitchClientSecret: "TWITCH_CLIENT_SECRET"
+    telegramBotToken: "TELEGRAM_BOT_TOKEN"
+    telegramChatId: "TELEGRAM_CHAT_ID"
+  values:
+    twitchClientId: "change-me"
+    twitchClientSecret: "change-me"
+    telegramBotToken: "change-me"
+    telegramChatId: "change-me"
+
+config:
+  databaseUrl: "sqlite:///./var/data.db"
+  databaseEcho: "false"
+  reportCron: "0 0 * * *"
+  rabbitmqExchange: "twitch_subs.events"
+  rabbitmqQueue: "twitch_subs.watcher"
+  rabbitmqPrefetch: 10
+  pythonUnbuffered: "1"
+  pythonDontWriteBytecode: "1"
+
+eventBus:
+  rabbitmq:
+    externalUrl: ""
+    externalUrlSecret:
+      name: ""
+      key: "RABBITMQ_URL"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10123
+  runAsGroup: 10123
+  fsGroup: 10123
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 30
+  timeoutSeconds: 3
+  failureThreshold: 5
+
+startupProbe:
+  enabled: true
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 12
+
+persistence:
+  enabled: true
+  existingClaim: ""
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+
+tmp:
+  sizeLimit: 64Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+strategy:
+  type: Recreate
+
+terminationGracePeriodSeconds: 20
+revisionHistoryLimit: 3
+progressDeadlineSeconds: 600
+
+networkPolicy:
+  enabled: false
+  egress: []
+  ingress: []
+
+rabbitmq:
+  enabled: true
+  image:
+    repository: "rabbitmq"
+    tag: "4.3-management"
+    digest: ""
+    pullPolicy: IfNotPresent
+  auth:
+    existingSecret: ""
+    username: "guest"
+    password: "guest"
+    secretKeys:
+      username: "RABBITMQ_DEFAULT_USER"
+      password: "RABBITMQ_DEFAULT_PASS"
+  service:
+    port: 5672
+    managementPort: 15672
+  persistence:
+    enabled: true
+    existingClaim: ""
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+    annotations: {}
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 5
+
+extraEnv: []
+extraVolumes: []
+extraVolumeMounts: []
