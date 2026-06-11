@@ -3,4 +3,5 @@
 *.secret.yaml
 *.decrypted.yaml
 secrets.local/
-
+.devenv/
+.pre-commit-config.yaml

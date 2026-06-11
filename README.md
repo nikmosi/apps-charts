@@ -4,6 +4,27 @@ Create or rotate these Kubernetes Secrets outside Git before applying the worklo
 The commands below read values from environment variables or local files and do
 not write plaintext secret material into the repository.
 
+## Development environment
+
+Enter the development shell and run the secret scan:
+
+```bash
+devenv shell
+scan-secrets
+```
+
+The shell installs Git hooks for Nix formatting, YAML syntax, Kubernetes
+schemas, Helm rendering, Kustomize builds, Flux resources, and secret scanning.
+Run the same checks manually with:
+
+```bash
+devenv test
+validate-kubernetes
+validate-helm
+validate-kustomize
+validate-flux
+```
+
 ```bash
 kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n cert-manager create secret generic cloudflare-api-token-secret \

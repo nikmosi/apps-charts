@@ -1,0 +1,9 @@
+sources:
+  - type: SOURCE_TYPE_GIT
+    name: local-kube
+    verify: true
+    connection:
+      "@type": type.googleapis.com/sources.Git
+      uri: file://.
+      base: 22efed42686e2bc03b128ee8c16db6fab7d46190
+      head: HEAD
