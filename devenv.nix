@@ -6,6 +6,8 @@
 
 {
   packages = [
+    pkgs.git
+    pkgs.nushell
     pkgs.trufflehog
     pkgs.kubectl
     pkgs.kubernetes-helm
