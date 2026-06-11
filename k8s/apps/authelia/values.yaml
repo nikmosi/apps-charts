@@ -348,11 +348,11 @@ configMap:
           claims:
             - entitlements
       jwks:
-        - key_id: authelia-rs256-2026-05
+        - key_id: authelia-rs256-2026-06
           algorithm: RS256
           use: sig
           key:
-            path: /secrets/authelia-oidc/jwks.authelia-rs256-2026-05.pem
+            path: /secrets/authelia-oidc/jwks.authelia-rs256-2026-06.pem
       cors:
         endpoints: []
         allowed_origins: []
