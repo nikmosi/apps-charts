@@ -381,7 +381,7 @@ configMap:
             - refresh_token
           require_pkce: true
           pkce_challenge_method: S256
-          token_endpoint_auth_method: client_secret_basic
+          token_endpoint_auth_method: client_secret_post
 
         - client_id: forgejo
           client_name: Forgejo
