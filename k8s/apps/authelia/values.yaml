@@ -364,6 +364,7 @@ configMap:
             path: /secrets/authelia-oidc/grafana-client-secret
           public: false
           authorization_policy: two_factor
+          consent_mode: implicit
           claims_policy: grafana
           redirect_uris:
             - https://grafana.xinfra.ru/login/generic_oauth
@@ -389,6 +390,7 @@ configMap:
             path: /secrets/authelia-oidc/forgejo-client-secret
           public: false
           authorization_policy: two_factor
+          consent_mode: implicit
           claims_policy: default
           redirect_uris:
             - https://git.xinfra.ru/user/oauth2/authelia/callback
@@ -410,6 +412,7 @@ configMap:
             path: /secrets/authelia-oidc/vikunja-client-secret
           public: false
           authorization_policy: two_factor
+          consent_mode: implicit
           claims_policy: default
           redirect_uris:
             - https://vikunja.xinfra.ru/auth/openid/authelia
@@ -456,6 +459,7 @@ configMap:
             path: /secrets/authelia-oidc/zot-client-secret
           public: false
           authorization_policy: two_factor
+          consent_mode: implicit
           claims_policy: default
           redirect_uris:
             - https://zot.xinfra.ru/zot/auth/callback/oidc
@@ -477,6 +481,7 @@ configMap:
             path: /secrets/authelia-oidc/zipline-client-secret
           public: false
           authorization_policy: two_factor
+          consent_mode: implicit
           claims_policy: default
           redirect_uris:
             - https://zipline.xinfra.ru/api/auth/oauth/oidc
