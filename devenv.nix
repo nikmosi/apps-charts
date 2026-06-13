@@ -24,6 +24,8 @@
 
   git-hooks.hooks = {
     nixfmt.enable = true;
+    statix.enable = true;
+    deadnix.enable = true;
 
     yamllint = {
       enable = true;

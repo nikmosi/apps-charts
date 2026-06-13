@@ -656,7 +656,7 @@ ingress:
 
   ## @param ingress.tlsFlavorOverride Overrides the value of `TLS_FLAVOR` environment variable in the `front` pod
   ## This is normally auto-detected, only change it if you know what you are doing.
-  tlsFlavorOverride: "notls"
+  tlsFlavorOverride: "cert"
 
   ## @param ingress.proxyProtocol.pop3 Enable PROXY protocol for POP3 (110/tcp)
   ## @param ingress.proxyProtocol.pop3s Enable PROXY protocol for POP3S (995/tcp)
