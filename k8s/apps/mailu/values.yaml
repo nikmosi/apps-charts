@@ -2006,7 +2006,7 @@ rspamd:
 ## @section clamav parameters
 clamav:
   ## @param clamav.enabled Enable ClamAV
-  enabled: true
+  enabled: false
 
   ## @param clamav.logLevel Override default log level
   logLevel: ""
@@ -2859,7 +2859,7 @@ fetchmail:
 ## @section OLETools parameters
 oletools:
   ## @param oletools.enabled Enable OLETools
-  enabled: true
+  enabled: false
 
   ## @param oletools.logLevel Override default log level
   logLevel: ""
@@ -3046,7 +3046,7 @@ oletools:
 ## @section Tika parameters
 tika:
   ## @param tika.enabled Enable tika
-  enabled: true
+  enabled: false
 
   ## @param tika.logLevel Override default log level
   logLevel: ""
