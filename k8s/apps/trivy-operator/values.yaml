@@ -85,7 +85,7 @@ trivy:
     # It is the user responsibility to create the secret for the private registry in `trivy-operator` namespace
     imagePullSecret: ~
 
-    # -- pullPolicy is the imge pull policy used for trivy image , valid values are (Always, Never, IfNotPresent)
+    # -- pullPolicy is the image pull policy used for trivy image , valid values are (Always, Never, IfNotPresent)
     pullPolicy: IfNotPresent
 
   # -- mode is the Trivy client mode. Either Standalone or ClientServer. Depending
@@ -99,7 +99,7 @@ trivy:
   # note: this flag is only applicable when trivy.command is set to filesystem
   includeDevDeps: false
 
-  # -- whether to use a storage class for trivy server or emptydir (one mey want to use ephemeral storage)
+  # -- whether to use a storage class for trivy server or emptydir (one may want to use ephemeral storage)
   storageClassEnabled: true
 
   # -- storageClassName is the name of the storage class to be used for trivy server PVC. If empty, tries to find default storage class
@@ -256,7 +256,7 @@ trivy:
         #   secret:
         #     secretName: trusted-ca
 
-  # -- vaulesFromConfigMap name of a ConfigMap to apply TRIVY_* environment variables. Will override Helm values.
+  # -- valuesFromConfigMap name of a ConfigMap to apply TRIVY_* environment variables. Will override Helm values.
   valuesFromConfigMap: ""
 
   # -- valuesFromSecret name of a Secret to apply TRIVY_* environment variables. Will override Helm AND ConfigMap values.

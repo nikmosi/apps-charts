@@ -51,7 +51,7 @@ RU_DOMAINS = [
     "https://kp.ru",
     "https://mk.ru",
     "https://rg.ru",
-    "https://iz.ru",
+    "https://is.ru",
     "https://fontanka.ru",
     "https://e1.ru",
     "https://yaplakal.com",

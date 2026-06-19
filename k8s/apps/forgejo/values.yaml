@@ -153,7 +153,7 @@ forgejo:
   ## @param httpRoute.matches.timeouts Object containing timeouts.
   ## @param httpRoute.filters Filters to apply on HTTP requests, such as header rewrites or request redirects
   ## @param httpRoute.port Target port for HTTPRoute. Must be a port number.
-  ## @param httpRoute.terminate wether the Gateway listener terminates the TLS connection. This just affects the forgejo `ROOT_URL` configuration.
+  ## @param httpRoute.terminate whether the Gateway listener terminates the TLS connection. This just affects the forgejo `ROOT_URL` configuration.
   httpRoute:
     enabled: false
     annotations: {}

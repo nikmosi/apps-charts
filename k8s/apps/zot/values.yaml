@@ -317,7 +317,7 @@ configFiles:
         }
       }
     }
-# Alternatively, the configuration can include authentication and acessControl
+# Alternatively, the configuration can include authentication and accessControl
 # data and we can use mountSecret option for the passwords.
 #
 #  config.json: |-

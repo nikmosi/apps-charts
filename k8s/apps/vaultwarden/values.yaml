@@ -543,13 +543,13 @@ sso:
   ## @param sso.existingSecret Name of an existing secret containing the OpenID Connect client id and secret. Also set sso.clientId.existingSecretKey and sso.clientSecret.existingSecretKey.
   ##
   existingSecret: ""
-  ## @param sso.onlySSO boolen to disable the email+master-password login flow.
+  ## @param sso.onlySSO boolean to disable the email+master-password login flow.
   ##
   onlySSO: true
-  ## @param sso.enforceSSO boolen to enforce SSO authentication for all users (except admin token access).
+  ## @param sso.enforceSSO boolean to enforce SSO authentication for all users (except admin token access).
   ##
   enforceSSO: true
-  ## @param sso.signupsMatchEmail boolen to define if SSO user signup should take control of existing account with given mail (only works during signup).
+  ## @param sso.signupsMatchEmail boolean to define if SSO user signup should take control of existing account with given mail (only works during signup).
   signupsMatchEmail: true
   ## @param sso.ignoreEmailVerification boolean to define if signup without mail verification is allowed (this is needed if your SSO provider does not send the 'email_verified' claim).
   ##
@@ -579,7 +579,7 @@ sso:
   ## @param sso.cacheExpiration expiration time for sso client cache, passing 0 disables the cache.
   ##
   cacheExpiration: 0
-  ## @param sso.debugTokens boolen to enbable token logging for debugging purpose
+  ## @param sso.debugTokens boolean to enable token logging for debugging purpose
   ##
   debugTokens: false
   ## Client ID for OpenID Connect authentication.

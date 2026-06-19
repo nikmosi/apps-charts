@@ -84,7 +84,7 @@ timezone: "Asia/Novosibirsk"
 ## @param initialAccount.password Password of the initial account; ignored if using existing secret; if empty, a random password will be generated and saved in a secret
 ## @param initialAccount.existingSecret Name of the existing secret to retrieve the initial account's password
 ## @param initialAccount.existingSecretPasswordKey Name of the key in the existing secret to use for the initial account's password
-## @param initialAccount.mode How to treat the creationg of the initial account. Possible values: "create", "update" or "ifmissing"
+## @param initialAccount.mode How to treat the creating of the initial account. Possible values: "create", "update" or "ifmissing"
 initialAccount:
   enabled: false
   username: ""
@@ -524,7 +524,7 @@ postgresql:
     image:
       repository: bitnamilegacy/os-shell
 
-## @param persistence.single_pvc Setings for a single volume for all apps.
+## @param persistence.single_pvc Settings for a single volume for all apps.
 ## Set single_pvc: false to use a per app volume and set the properties in <app>.persistence (ex. admin.persistence)
 ## @param persistence.size Size of the persistent volume claim (for single PVC)
 ## @param persistence.accessModes Access mode of backing PVC (for single PVC)
@@ -621,17 +621,6 @@ ingress:
   ## If it is not set and you're NOT using cert-manager either, self-signed certificates will be created valid for 365 days (if `ingress.selfSigned=true`)
   ## It is also possible to create and manage the certificates outside of this Helm chart
   ## Please see README.md for more information
-  ## e.g:
-  ## secrets:
-  ##   - name: mailu.local-tls
-  ##     key: |-
-  ##       -----BEGIN RSA PRIVATE KEY-----
-  ##       ...
-  ##       -----END RSA PRIVATE KEY-----
-  ##     certificate: |-
-  ##       -----BEGIN CERTIFICATE-----
-  ##       ...
-  ##       -----END CERTIFICATE-----
   secrets: []
 
   ## @param ingress.extraRules Additional rules to be covered with this ingress record
