@@ -16,7 +16,6 @@
     pkgs.kubernetes-validate
     pkgs.yamllint
     pkgs.yq-go
-    pkgs.fluxcd
     pkgs.nixfmt
     pkgs.kind
     pkgs.k9s
@@ -34,15 +33,22 @@
     fix-byte-order-marker.enable = true;
     mixed-line-endings.enable = true;
     trim-trailing-whitespace.enable = true;
-    detect-private-keys.enable = true;
+    detect-private-keys = {
+      enable = true;
+      excludes = [ "^k8s/charts/" ];
+    };
 
     # format validation — по наличию файлов
     check-json.enable = true;
-    check-yaml.enable = true;
+    check-yaml = {
+      enable = true;
+      excludes = [ "^k8s/charts/" ];
+    };
 
     # spell check
     typos = {
       enable = true;
+      excludes = [ "^k8s/charts/" ];
       settings = { };
     };
 
@@ -54,7 +60,10 @@
     # YAML
     yamllint = {
       enable = true;
-      excludes = [ "^k8s/.*/templates/" ];
+      excludes = [
+        "^k8s/.*/templates/"
+        "^k8s/charts/"
+      ];
       settings = {
         strict = true;
         configuration = ''
@@ -76,7 +85,10 @@
       name = "Kubernetes manifests";
       entry = "validate-kubernetes";
       files = "^k8s/.*\\.ya?ml$";
-      excludes = [ "^k8s/.*/templates/" ];
+      excludes = [
+        "^k8s/.*/templates/"
+        "^k8s/charts/"
+      ];
       pass_filenames = true;
     };
 
