@@ -1,62 +1,164 @@
 ---
-replicaCount: 1
+# -- Overrides the chart's name.
+nameOverride: ""
+# -- Overrides the chart's fullname.
+fullnameOverride: ""
 
+# -- Upstream lldap subchart values — passed as-is to the upstream chart.
+lldap:
+  replicaCount: 1
+  image:
+    registry: ghcr.io
+    repository: lldap/lldap
+    pullPolicy: IfNotPresent
+    tag: "2026-01-06-alpine"
+    sha: ""
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  podAnnotations: {}
+  updateStrategy:
+    type: RollingUpdate
+  extraEnv: []
+  extraEnvFrom: []
+  extraInitContainers: []
+  serviceAccount:
+    create: true
+    automount: false
+    annotations: {}
+    name: ""
+  secret:
+    create: false
+    existingSecret: lldap-secrets
+  persistence:
+    enabled: true
+    size: 1Gi
+    annotations: {}
+    accessModes:
+      - ReadWriteOnce
+    volumeName: ""
+    storageClass: ""
+  env:
+    TZ: "Asia/Novosibirsk"
+    GID: "1000"
+    UID: "1000"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  podSecurityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    privileged: false
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  service:
+    type: ClusterIP
+    annotations: {}
+    ldap_port: 3890
+    ldaps_port: 6360
+    http_port: 17170
+    ldaps_enabled: false
+  ingress:
+    enabled: false
+
+# -- Image settings used by both the upstream chart (via lldap.*) and
+# -- the bootstrap job.
 image:
   registry: ghcr.io
   repository: lldap/lldap
   pullPolicy: IfNotPresent
   tag: "2026-01-06-alpine"
 
-serviceAccount:
-  create: true
-  automount: false
-
-secret:
-  create: false
-  existingSecret: lldap-secrets
-
-persistence:
-  enabled: true
-  size: 1Gi
-  accessModes:
-    - ReadWriteOnce
-
-env:
-  TZ: "Asia/Novosibirsk"
-  GID: "1000"
-  UID: "1000"
-
-resources:
-  requests:
-    cpu: 50m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi
-
-podSecurityContext:
-  fsGroup: 1000
-  fsGroupChangePolicy: OnRootMismatch
-
-securityContext:
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  privileged: false
-  runAsUser: 1000
-  runAsGroup: 1000
-  seccompProfile:
-    type: RuntimeDefault
-
+# -- Service settings shared by ingress and bootstrap.
 service:
-  type: ClusterIP
-  ldap_port: 3890
-  ldaps_port: 6360
   http_port: 17170
-  ldaps_enabled: false
 
 ingress:
-  enabled: false
+  enabled: true
+  ingressClassName: traefik
+  annotations: {}
+  hosts:
+    - host: lldap.xinfra.ru
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: wildcard-xinfra-ru-tls
+      hosts:
+        - lldap.xinfra.ru
+
+bootstrap:
+  enabled: true
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 604800
+  adminUsername: admin
+  adminPasswordSecret: lldap-secrets
+  adminPasswordKey: lldap-ldap-user-pass
+  userPasswordsSecret: lldap-user-passwords
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+  groups:
+    admins:
+      name: admins
+    grafana-admins:
+      name: Grafana Admins
+    grafana-editors:
+      name: Grafana Editors
+    zot-admins:
+      name: zot-admins
+    zot-readonly:
+      name: zot-readonly
+    zot-users:
+      name: zot-users
+  users:
+    authelia:
+      id: authelia
+      email: authelia@xinfra.ru
+      displayName: Authelia LDAP Bind
+      groups:
+        - lldap_strict_readonly
+      password_file: /bootstrap/secrets/authelia-bind-password
+    forgejo:
+      id: forgejo
+      email: forgejo@xinfra.ru
+      displayName: Forgejo
+      groups:
+        - zot-users
+      password_file: /bootstrap/secrets/forgejo-password
+    nikmosi:
+      id: nikmosi
+      email: nikmosi@xinfra.ru
+      displayName: nikmosi
+      groups:
+        - admins
+        - Grafana Admins
+        - Grafana Editors
+        - zot-admins
+        - zot-users
+      password_file: /bootstrap/secrets/nikmosi-password
+    zot-reader:
+      id: zot-reader
+      email: zot-reader@xinfra.ru
+      displayName: Zot Readonly
+      groups:
+        - zot-readonly
+      password_file: /bootstrap/secrets/zot-reader-password

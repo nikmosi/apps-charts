@@ -1,0 +1,10 @@
+apiVersion: v2
+name: lldap-stack
+description: LLDAP identity provider with bootstrap job
+type: application
+version: 0.1.0
+appVersion: "2026-01-06"
+dependencies:
+  - name: lldap
+    version: ~1.0.8
+    repository: oci://ghcr.io/alexmorbo/helm-charts/lldap

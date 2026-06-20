@@ -1,31 +1,31 @@
----
+{{- if .Values.bootstrap.enabled -}}
+{{- $bootstrapHash := sha256sum (toYaml .Values.bootstrap) -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: lldap-bootstrap
-  namespace: apps-lldap
+  name: {{ .Release.Name }}-bootstrap-{{ $bootstrapHash | trunc 8 }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    app.kubernetes.io/name: lldap
-    app.kubernetes.io/instance: lldap
+    {{- include "lldap-stack.labels" . | nindent 4 }}
     app.kubernetes.io/component: bootstrap
 spec:
-  backoffLimit: 2
+  backoffLimit: {{ .Values.bootstrap.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.bootstrap.ttlSecondsAfterFinished }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: lldap
-        app.kubernetes.io/instance: lldap
+        {{- include "lldap-stack.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: bootstrap
     spec:
       restartPolicy: OnFailure
       automountServiceAccountToken: false
       securityContext:
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
+        fsGroup: {{ .Values.bootstrap.securityContext.fsGroup }}
+        fsGroupChangePolicy: {{ .Values.bootstrap.securityContext.fsGroupChangePolicy }}
       containers:
         - name: bootstrap
-          image: ghcr.io/lldap/lldap:2026-01-06-alpine-rootless
-          imagePullPolicy: IfNotPresent
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}-rootless"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /bin/sh
             - -ec
@@ -34,11 +34,11 @@ spec:
               TMPDIR=/work/tmp /app/bootstrap.sh
           env:
             - name: LLDAP_URL
-              value: http://lldap.apps-lldap.svc.cluster.local:17170
+              value: http://{{ include "lldap-stack.lldapServiceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.http_port }}
             - name: LLDAP_ADMIN_USERNAME
-              value: admin
+              value: {{ .Values.bootstrap.adminUsername }}
             - name: LLDAP_ADMIN_PASSWORD_FILE
-              value: /bootstrap/admin/lldap-ldap-user-pass
+              value: /bootstrap/admin/{{ .Values.bootstrap.adminPasswordKey }}
             - name: GROUP_CONFIGS_DIR
               value: /bootstrap/group-configs
             - name: USER_CONFIGS_DIR
@@ -54,8 +54,8 @@ spec:
                 - ALL
             readOnlyRootFilesystem: true
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: {{ .Values.bootstrap.securityContext.runAsUser }}
+            runAsGroup: {{ .Values.bootstrap.securityContext.runAsGroup }}
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -79,20 +79,21 @@ spec:
       volumes:
         - name: group-configs
           configMap:
-            name: lldap-bootstrap-groups
+            name: {{ .Release.Name }}-bootstrap-groups
         - name: user-configs
           configMap:
-            name: lldap-bootstrap-users
+            name: {{ .Release.Name }}-bootstrap-users
         - name: user-passwords
           secret:
-            secretName: lldap-user-passwords
+            secretName: {{ .Values.bootstrap.userPasswordsSecret }}
         - name: admin-password
           secret:
-            secretName: lldap-secrets
+            secretName: {{ .Values.bootstrap.adminPasswordSecret }}
             items:
-              - key: lldap-ldap-user-pass
-                path: lldap-ldap-user-pass
+              - key: {{ .Values.bootstrap.adminPasswordKey }}
+                path: {{ .Values.bootstrap.adminPasswordKey }}
         - name: empty-configs
           emptyDir: {}
         - name: work
           emptyDir: {}
+{{- end }}

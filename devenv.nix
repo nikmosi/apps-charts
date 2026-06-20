@@ -42,7 +42,10 @@
     check-json.enable = true;
     check-yaml = {
       enable = true;
-      excludes = [ "^k8s/charts/" ];
+      excludes = [
+        "^k8s/.*/templates/"
+        "^k8s/charts/"
+      ];
     };
 
     # spell check

@@ -1,0 +1,29 @@
+{{- if .Values.bootstrap.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-bootstrap-groups
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "lldap-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: bootstrap
+data:
+  {{- range $name, $config := .Values.bootstrap.groups }}
+  {{ $name }}.json: |
+    {{- $config | toJson | nindent 4 }}
+  {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-bootstrap-users
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "lldap-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: bootstrap
+data:
+  {{- range $name, $config := .Values.bootstrap.users }}
+  {{ $name }}.json: |
+    {{- $config | toJson | nindent 4 }}
+  {{- end }}
+{{- end }}
