@@ -139,10 +139,7 @@ kubectl -n apps-ntfy exec statefulset/ntfy -- sh -c 'NTFY_PASSWORD="$(head -c 24
 kubectl -n apps-ntfy exec statefulset/ntfy -- ntfy access crowdsec alerts-crowdsec write-only
 kubectl get secret crowdsec-ntfy-token -n crowdsec >/dev/null 2>&1 || kubectl -n crowdsec create secret generic crowdsec-ntfy-token --from-literal=NTFY_TOKEN="$(kubectl -n apps-ntfy exec statefulset/ntfy -- ntfy token add --label crowdsec crowdsec | sed -n 's/.*\(tk_[A-Za-z0-9]*\).*/\1/p' | tail -n 1)"
 kubectl get secret crowdsec-keys -n crowdsec >/dev/null 2>&1 || kubectl -n crowdsec create secret generic crowdsec-keys --from-literal=ENROLL_KEY="${CROWDSEC_ENROLL_KEY:?Set CROWDSEC_ENROLL_KEY from CrowdSec Console}"
-helm upgrade --install crowdsec crowdsec/crowdsec --version 0.24.0 -n crowdsec -f k8s/apps/crowdsec/values.yaml
 helm upgrade --install trivy-operator aqua/trivy-operator -n trivy-system -f k8s/apps/trivy-operator/values.yaml
-helm upgrade --install vaultwarden vaultwarden/vaultwarden -n apps-warden -f k8s/apps/vaultwarden/values.yaml
-helm upgrade --install vikunja oci://ghcr.io/go-vikunja/helm-chart/vikunja -n apps-vikunja -f k8s/apps/vikunja/values.yaml
 helm upgrade --install zipline k8s/apps/zipline -n apps-zipline
 kubectl create namespace apps-zot --dry-run=client -o yaml | kubectl apply -f -
 kubectl get secret zot-ldap -n apps-zot >/dev/null 2>&1 || kubectl -n apps-zot create secret generic zot-ldap --from-literal=config-ldap-credentials.json="$(jq -cn --arg bindDN 'uid=authelia,ou=people,dc=xinfra,dc=ru' --arg bindPassword "$(kubectl get secret lldap-user-passwords -n apps-lldap -o jsonpath='{.data.authelia-bind-password}' | base64 -d)" '{bindDN:$bindDN,bindPassword:$bindPassword}')"
