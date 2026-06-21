@@ -109,7 +109,9 @@ ntfy:
   # ntfy.extraArgs are appended after `ntfy serve`.
   extraArgs: []
 
-  # ntfy.extraEnv adds additional environment variables to the ntfy container.
+  # ntfy.env adds additional environment variables to the ntfy container.
+  env: []
+  # ntfy.extraEnv adds additional environment variables to the ntfy container (appended after env).
   extraEnv:
     - name: TZ
       value: "Asia/Novosibirsk"

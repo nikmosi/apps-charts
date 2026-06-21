@@ -48,9 +48,14 @@ spec:
             - valkey-server
           args:
             {{- toYaml .Values.valkey.args | nindent 12 }}
-          {{- with .Values.valkey.env }}
+          {{- if or .Values.valkey.env .Values.valkey.extraEnv }}
           env:
+            {{- with .Values.valkey.env }}
             {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.valkey.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
           ports:
             - name: redis

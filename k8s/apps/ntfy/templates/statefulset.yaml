@@ -49,9 +49,14 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-          {{- with .Values.ntfy.extraEnv }}
+          {{- if or .Values.ntfy.env .Values.ntfy.extraEnv }}
           env:
+            {{- with .Values.ntfy.env }}
             {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.ntfy.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:

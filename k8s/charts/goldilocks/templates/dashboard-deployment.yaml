@@ -62,6 +62,10 @@ spec:
             - --base-path
             - {{ . }}
             {{- end }}
+          {{- with .Values.dashboard.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         {{- if .Values.dashboard.securityContext }}
           securityContext:
             {{- toYaml .Values.dashboard.securityContext | nindent 12 }}

@@ -65,6 +65,10 @@ spec:
             - name: metrics
               containerPort: 8942
               protocol: TCP
+          {{- with .Values.recommender.extraEnv }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- $extraArgs := .Values.recommender.extraArgs | default dict }}
           {{- $insightsRecommenderArgs := index $extraArgs "use-insights-recommender" | default dict }}
           {{- if or .Values.recommender.envFromSecret $insightsRecommenderArgs }}

@@ -9,6 +9,8 @@ locust:
   extraLabels:
     app.kubernetes.io/part-of: locust
 
+  extraEnv: []
+
   loadtest:
     name: stealth-noise
     locust_host: "https://google.com"

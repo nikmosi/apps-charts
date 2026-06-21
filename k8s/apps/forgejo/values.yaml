@@ -245,6 +245,7 @@ forgejo:
   schedulerName: ""
 
   ## @param deployment.env  Additional environment variables to pass to containers
+  ## @param deployment.extraEnv  Additional environment variables (appended after env)
   ## @param deployment.terminationGracePeriodSeconds How long to wait until forcefully kill the pod
   ## @param deployment.labels Labels for the deployment
   ## @param deployment.annotations Annotations for the Forgejo deployment to be created
@@ -254,6 +255,7 @@ forgejo:
         value: "Asia/Novosibirsk"
       # - name: VARIABLE
       #   value: my-value
+    extraEnv: []
     terminationGracePeriodSeconds: 60
     labels: {}
     annotations: {}
@@ -594,6 +596,7 @@ valkey:
   env:
     - name: TZ
       value: "Asia/Novosibirsk"
+  extraEnv: []
   readinessProbe:
     exec:
       command:

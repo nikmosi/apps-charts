@@ -50,6 +50,8 @@ recommender:
   enabled: true
   # -- Specify a secret to get environment variables from
   envFromSecret: ""
+  # recommender.extraEnv -- Additional environment variables for the recommender container
+  extraEnv: []
   # recommender.annotations -- Annotations to add to the recommender deployment
   annotations: {}
   # recommender.extraArgs -- A set of key-value flags to be passed to the recommender
@@ -127,6 +129,8 @@ recommender:
 updater:
   # updater.enabled -- If true, the updater component will be deployed
   enabled: true
+  # updater.extraEnv -- Additional environment variables for the updater container
+  extraEnv: []
   # updater.annotations -- Annotations to add to the updater deployment
   annotations: {}
   # updater.extraArgs -- A key-value map of flags to pass to the updater.
@@ -203,6 +207,8 @@ updater:
 admissionController:
   # admissionController.enabled -- If true, will install the admission-controller component of vpa
   enabled: true
+  # admissionController.extraEnv -- Additional environment variables for the admission controller container
+  extraEnv: []
   # admissionController.annotations -- Annotations to add to the admission controller deployment
   annotations: {}
   # admissionController.extraArgs -- A key-value map of flags to pass to the admissionController
