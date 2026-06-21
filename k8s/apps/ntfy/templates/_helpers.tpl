@@ -51,16 +51,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Labels for immutable StatefulSet volumeClaimTemplates.
+Labels for immutable StatefulSet volumeClaimTemplates (no versioned labels).
 */}}
 {{- define "ntfy.volumeClaimLabels" -}}
-helm.sh/chart: {{ include "ntfy.chart" . }}
 {{ include "ntfy.selectorLabels" . }}
 app.kubernetes.io/component: server
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
