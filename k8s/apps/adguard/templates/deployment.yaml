@@ -37,6 +37,33 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- if and .Values.adguardConfig .Values.persistence.enabled }}
+      initContainers:
+        - name: init-config
+          image: {{ include "adguard.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              if [ ! -f /opt/adguardhome/conf/AdGuardHome.yaml ]; then
+                cp /opt/adguardhome/conf.init/AdGuardHome.yaml /opt/adguardhome/conf/AdGuardHome.yaml
+                echo "Initial config applied"
+              else
+                echo "Config already exists, skipping"
+              fi
+          volumeMounts:
+            - name: init-config
+              mountPath: /opt/adguardhome/conf.init
+              readOnly: true
+            - name: data
+              mountPath: /opt/adguardhome/conf
+              subPath: conf
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+      {{- end }}
       containers:
         - name: adguard
           image: {{ include "adguard.image" . | quote }}
@@ -102,6 +129,11 @@ spec:
         - name: tls
           secret:
             secretName: {{ .Values.encryption.secretName | quote }}
+      {{- end }}
+      {{- if and .Values.adguardConfig .Values.persistence.enabled }}
+        - name: init-config
+          configMap:
+            name: {{ include "adguard.fullname" . }}-config
       {{- end }}
       {{- if .Values.persistence.enabled }}
         - name: data

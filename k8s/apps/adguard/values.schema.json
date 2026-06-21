@@ -152,6 +152,14 @@
         }
       }
     },
+    "adguardConfig": {
+      "type": "object",
+      "properties": {
+        "dns": {
+          "type": "object"
+        }
+      }
+    },
     "forwardAuth": {
       "type": "object",
       "required": ["enabled"],

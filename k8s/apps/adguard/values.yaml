@@ -76,15 +76,35 @@ encryption:
   strictSniCheck: false
 
 forwardAuth:
-  enabled: true
-  name: forwardauth-authelia
-  address: http://authelia.apps-authelia.svc.cluster.local/api/authz/forward-auth
-  trustForwardHeader: true
-  authResponseHeaders:
-    - Remote-User
-    - Remote-Name
-    - Remote-Email
-    - Remote-Groups
+  enabled: false
+  name: ""
+  address: ""
+  trustForwardHeader: false
+  authResponseHeaders: []
+
+adguardConfig:
+  # Initial AdGuardHome configuration (applied on first start)
+  dns:
+    upstream_dns:
+      - https://dns.cloudflare.com/dns-query
+      - https://dns.google/dns-query
+      - https://dns10.quad9.net/dns-query
+    bootstrap_dns:
+      - 1.1.1.1
+      - 8.8.8.8
+      - 1.0.0.1
+      - 8.8.4.4
+      - 9.9.9.10
+      - 149.112.112.10
+    upstream_mode: load_balance
+    cache_enabled: true
+    cache_size: 4194304
+    enable_dnssec: true
+    refuse_any: true
+    serve_plain_dns: true
+    filtering_enabled: true
+    protection_enabled: true
+    rate_limit: 20
 
 env:
   - name: TZ

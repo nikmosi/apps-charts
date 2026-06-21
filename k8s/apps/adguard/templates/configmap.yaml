@@ -1,0 +1,12 @@
+{{- if .Values.adguardConfig }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "adguard.fullname" . }}-config
+  labels:
+    {{- include "adguard.labels" . | nindent 4 }}
+data:
+  AdGuardHome.yaml: |
+    {{- toYaml .Values.adguardConfig | nindent 4 }}
+{{- end }}
