@@ -106,6 +106,14 @@ adguardConfig:
     protection_enabled: true
     rate_limit: 20
 
+auth:
+  enabled: false
+  existingSecret: ""
+  username: admin
+  password: ""
+  usernameKey: username
+  passwordKey: password
+
 env:
   - name: TZ
     value: Asia/Novosibirsk

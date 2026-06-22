@@ -1,0 +1,45 @@
+---
+schedule: "0 2 * * *"
+
+image:
+  repository: buddyspencer/gickup
+  pullPolicy: IfNotPresent
+  tag: "v0.10.45"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+existingSecret: gickup-secrets
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

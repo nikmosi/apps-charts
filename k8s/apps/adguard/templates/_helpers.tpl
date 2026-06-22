@@ -62,6 +62,14 @@ Container image.
 {{/*
 Service account name.
 */}}
+{{- define "adguard.authSecretName" -}}
+{{- if .Values.auth.existingSecret -}}
+{{- .Values.auth.existingSecret -}}
+{{- else -}}
+{{- printf "%s-auth" (include "adguard.fullname" .) -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "adguard.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
 {{- default (include "adguard.fullname" .) .Values.serviceAccount.name -}}

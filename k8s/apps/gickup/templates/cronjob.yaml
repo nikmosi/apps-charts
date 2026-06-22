@@ -1,0 +1,100 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "gickup.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gickup.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "gickup.selectorLabels" . | nindent 12 }}
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "gickup.serviceAccountName" . }}
+          {{- with .Values.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumes:
+            - name: config
+              configMap:
+                name: {{ include "gickup.fullname" . }}
+            - name: secrets
+              secret:
+                secretName: {{ .Values.existingSecret }}
+                defaultMode: 0400
+            - name: temp
+              emptyDir: {}
+            - name: ssh-key
+              emptyDir: {}
+          initContainers:
+            - name: init-ssh-key
+              image: busybox
+              command:
+                - sh
+                - -c
+                - |
+                  cp /etc/gickup/secrets/ssh-key /tmp/ssh/gickup-ssh-key
+                  chmod 0400 /tmp/ssh/gickup-ssh-key
+                  chown 65534:65534 /tmp/ssh/gickup-ssh-key
+              securityContext:
+                runAsUser: 0
+              volumeMounts:
+                - name: secrets
+                  mountPath: /etc/gickup/secrets
+                  readOnly: true
+                - name: ssh-key
+                  mountPath: /tmp/ssh
+          containers:
+            - name: gickup
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              args: ["/etc/gickup/config/conf.yml"]
+              workingDir: /tmp
+              env:
+                - name: HOME
+                  value: /tmp
+                - name: TMPDIR
+                  value: /tmp
+              {{- with .Values.securityContext }}
+              securityContext:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              volumeMounts:
+                - name: config
+                  mountPath: /etc/gickup/config
+                  readOnly: true
+                - name: secrets
+                  mountPath: /etc/gickup/secrets
+                  readOnly: true
+                - name: temp
+                  mountPath: /tmp
+                - name: ssh-key
+                  mountPath: /tmp/ssh
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}

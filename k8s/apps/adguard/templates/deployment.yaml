@@ -21,9 +21,14 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- with .Values.podAnnotations }}
+      {{- if or .Values.podAnnotations .Values.auth.enabled }}
       annotations:
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .Values.auth.enabled }}
+        checksum/auth-secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- end }}
       {{- end }}
     spec:
       serviceAccountName: {{ include "adguard.serviceAccountName" . | quote }}
@@ -37,8 +42,9 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if and .Values.adguardConfig .Values.persistence.enabled }}
+      {{- if and .Values.persistence.enabled (or .Values.adguardConfig .Values.auth.enabled) }}
       initContainers:
+        {{- if .Values.adguardConfig }}
         - name: init-config
           image: {{ include "adguard.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -63,6 +69,43 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             runAsUser: 0
+        {{- end }}
+        {{- if .Values.auth.enabled }}
+        - name: init-auth
+          image: {{ include "adguard.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              USERNAME=$(cat /opt/adguardhome/auth/{{ .Values.auth.usernameKey }})
+              PASSWORD=$(cat /opt/adguardhome/auth/{{ .Values.auth.passwordKey }})
+              apk add --no-cache apache2-utils > /dev/null 2>&1
+              HASH=$(echo -n "$PASSWORD" | htpasswd -niB "$USERNAME" | cut -d: -f2)
+              if [ ! -f /opt/adguardhome/conf/AdGuardHome.yaml ]; then
+                printf 'auth:\n' > /opt/adguardhome/conf/AdGuardHome.yaml
+                printf '  username: "%s"\n' "$USERNAME" >> /opt/adguardhome/conf/AdGuardHome.yaml
+                printf '  password: "%s"\n' "$HASH" >> /opt/adguardhome/conf/AdGuardHome.yaml
+              else
+                awk '/^auth:/{flag=1;next} /^[^[:space:]]/{if(flag) flag=0} !flag' /opt/adguardhome/conf/AdGuardHome.yaml > /tmp/AdGuardHome.yaml
+                printf 'auth:\n' >> /tmp/AdGuardHome.yaml
+                printf '  username: "%s"\n' "$USERNAME" >> /tmp/AdGuardHome.yaml
+                printf '  password: "%s"\n' "$HASH" >> /tmp/AdGuardHome.yaml
+                mv /tmp/AdGuardHome.yaml /opt/adguardhome/conf/AdGuardHome.yaml
+              fi
+              echo "Auth configured"
+          volumeMounts:
+            - name: auth
+              mountPath: /opt/adguardhome/auth
+              readOnly: true
+            - name: data
+              mountPath: /opt/adguardhome/conf
+              subPath: conf
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            runAsUser: 0
+        {{- end }}
       {{- end }}
       containers:
         - name: adguard
@@ -134,6 +177,11 @@ spec:
         - name: tls
           secret:
             secretName: {{ .Values.encryption.secretName | quote }}
+      {{- end }}
+      {{- if .Values.auth.enabled }}
+        - name: auth
+          secret:
+            secretName: {{ include "adguard.authSecretName" . }}
       {{- end }}
       {{- if and .Values.adguardConfig .Values.persistence.enabled }}
         - name: init-config

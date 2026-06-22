@@ -1,0 +1,12 @@
+gickup {{ .Chart.AppVersion }} has been deployed as a CronJob.
+
+Schedule: {{ .Values.schedule }}
+
+To check the last backup run:
+  kubectl -n {{ .Release.Namespace }} get jobs --watch
+
+To view logs:
+  kubectl -n {{ .Release.Namespace }} logs job/gickup-<job-id>
+
+To trigger a manual run:
+  kubectl -n {{ .Release.Namespace }} create job --from=cronjob/gickup gickup-manual
