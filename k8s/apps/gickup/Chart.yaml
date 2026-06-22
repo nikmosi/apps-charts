@@ -3,7 +3,7 @@ apiVersion: v2
 name: gickup
 description: A Helm chart for gickup - mirror Git repositories between hosts
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "0.10.45"
 keywords:
   - git
