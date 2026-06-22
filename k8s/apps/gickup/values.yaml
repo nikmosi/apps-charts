@@ -4,7 +4,7 @@ schedule: "0 2 * * *"
 image:
   repository: buddyspencer/gickup
   pullPolicy: IfNotPresent
-  tag: "v0.10.45"
+  tag: "0.10.45"
 
 imagePullSecrets: []
 nameOverride: ""
