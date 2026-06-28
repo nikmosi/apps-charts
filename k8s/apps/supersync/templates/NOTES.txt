@@ -1,0 +1,16 @@
+SuperSync server has been installed.
+
+Service:
+  {{ include "supersync.fullname" . }}:{{ .Values.service.port }}
+
+{{- if .Values.ingress.enabled }}
+Ingress hosts:
+{{- range .Values.ingress.hosts }}
+  - {{ .host }}
+{{- end }}
+{{- end }}
+
+PostgreSQL is {{ if not .Values.postgresql.enabled }}(configured externally){{ else }}bundled{{ end }}.
+
+Run tests:
+  helm test {{ .Release.Name }} --namespace {{ .Release.Namespace }}

@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "supersync.fullname" . }}
+  labels:
+    {{- include "supersync.labels" . | nindent 4 }}
+data:
+  NODE_ENV: "production"
+  PORT: {{ .Values.service.port | quote }}
+  DATA_DIR: /app/data
+  HOST: {{ .Values.config.host | quote }}
+  {{- with .Values.config.publicUrl }}
+  PUBLIC_URL: {{ . | quote }}
+  {{- end }}
+  CORS_ENABLED: {{ .Values.config.corsEnabled | quote }}
+  CORS_ORIGINS: {{ .Values.config.corsOrigins | quote }}
+  RUN_MIGRATIONS_ON_STARTUP: {{ .Values.config.runMigrationsOnStartup | quote }}
+  WEBAUTHN_RP_NAME: {{ .Values.config.webauthnRpName | quote }}
+  {{- with .Values.config.webauthnRpId }}
+  WEBAUTHN_RP_ID: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.config.webauthnOrigin }}
+  WEBAUTHN_ORIGIN: {{ . | quote }}
+  {{- end }}
+  OLD_OPS_CLEANUP_DELETE_BATCH_SIZE: {{ .Values.config.oldOpsCleanupDeleteBatchSize | quote }}
+  OLD_OPS_CLEANUP_MAX_DELETED_PER_RUN: {{ .Values.config.oldOpsCleanupMaxDeletedPerRun | quote }}
+  SUPERSYNC_BATCH_UPLOAD: {{ .Values.config.supersyncBatchUpload | quote }}
+  SUPERSYNC_PAYLOAD_BYTES_BACKFILL_COMPLETE: {{ .Values.config.supersyncPayloadBytesBackfillComplete | quote }}
+  {{- with .Values.config.smtpHost }}
+  SMTP_HOST: {{ . | quote }}
+  {{- end }}
+  {{- if .Values.config.smtpPort }}
+  SMTP_PORT: {{ .Values.config.smtpPort | quote }}
+  {{- end }}
+  SMTP_SECURE: {{ .Values.config.smtpSecure | quote }}
+  {{- with .Values.config.smtpFrom }}
+  SMTP_FROM: {{ . | quote }}
+  {{- end }}
+  {{- with .Values.config.extraConfig }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
