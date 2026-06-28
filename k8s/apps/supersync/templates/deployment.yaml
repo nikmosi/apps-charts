@@ -61,7 +61,7 @@ spec:
           command:
             - sh
             - -c
-            - sh scripts/migrate-deploy.sh
+            - cd /app && node node_modules/.bin/prisma migrate deploy
           envFrom:
             - configMapRef:
                 name: {{ include "supersync.fullname" . }}
