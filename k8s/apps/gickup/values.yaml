@@ -1,5 +1,7 @@
 ---
 schedule: "0 2 * * *"
+backoffLimit: 2
+activeDeadlineSeconds: 7200
 
 image:
   repository: buddyspencer/gickup

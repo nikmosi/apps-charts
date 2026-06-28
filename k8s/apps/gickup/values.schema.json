@@ -25,6 +25,14 @@
         }
       }
     },
+    "backoffLimit": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "activeDeadlineSeconds": {
+      "type": "integer",
+      "minimum": 1
+    },
     "existingSecret": {
       "type": "string",
       "minLength": 1
