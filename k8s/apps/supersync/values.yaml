@@ -67,7 +67,7 @@ config:
   publicUrl: ""
   corsEnabled: true
   corsOrigins: "https://app.super-productivity.com,https://*.super-productivity-preview.pages.dev"
-  runMigrationsOnStartup: false
+  runMigrationsOnStartup: true
   webauthnRpName: "Super Productivity Sync"
   webauthnRpId: ""
   webauthnOrigin: ""
