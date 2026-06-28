@@ -39,8 +39,22 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.config.runMigrationsOnStartup }}
       initContainers:
+        - name: copy-public
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - cp -r /app/public/. /public/ && chown -R 1001:1001 /public
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: public
+              mountPath: /public
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.config.runMigrationsOnStartup }}
         - name: migrate-db
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
