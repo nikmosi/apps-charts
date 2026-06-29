@@ -22,6 +22,13 @@ locust:
 
   master:
     replicas: 1
+    livenessProbe:
+      tcpSocket:
+        port: 5557
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
     args:
       - --users=10
       - --spawn-rate=1
