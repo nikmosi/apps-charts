@@ -3,7 +3,7 @@ apiVersion: v2
 name: dozzle
 description: A Helm chart for Dozzle Kubernetes log viewer
 type: application
-version: 0.1.1
+version: 0.1.2
 appVersion: "latest"
 keywords:
   - logs

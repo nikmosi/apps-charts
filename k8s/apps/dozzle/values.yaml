@@ -109,6 +109,13 @@ securityContext: {}
 
 resources: {}
 
+startupProbe:
+  enabled: true
+  tcpSocket:
+    port: http
+  failureThreshold: 30
+  periodSeconds: 10
+
 livenessProbe:
   enabled: true
   tcpSocket:

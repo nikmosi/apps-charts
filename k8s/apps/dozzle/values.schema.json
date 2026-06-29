@@ -94,6 +94,15 @@
           "minLength": 1
         }
       }
+    },
+    "startupProbe": {
+      "type": "object"
+    },
+    "livenessProbe": {
+      "type": "object"
+    },
+    "readinessProbe": {
+      "type": "object"
     }
   }
 }
