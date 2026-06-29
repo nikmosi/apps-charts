@@ -1,6 +1,6 @@
 dependencies:
 - name: lldap
   repository: oci://ghcr.io/alexmorbo/helm-charts/lldap
-  version: 1.0.8
-digest: sha256:1b6e83179e4eb67be1580ec2a239c54ef73a0044a92d231b073185491e2461ea
-generated: "2026-06-20T16:46:07.000000000Z"
+  version: 1.0.9
+digest: sha256:02d46bac0af48ad06b3c656f14279588167dcc08bf68c0b8afcf0fffd3de1f93
+generated: "2026-06-30T00:00:00.000000000Z"
