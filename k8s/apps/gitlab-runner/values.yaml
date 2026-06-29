@@ -5,19 +5,27 @@ image:
 
 imagePullSecrets: []
 
-livenessProbe: {}
-#   initialDelaySeconds: 60
-#   periodSeconds: 60
-#   successThreshold: 1
-#   failureThreshold: 3
-#   terminationGracePeriodSeconds: 30
+livenessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - ps aux | grep -v grep | grep -q "[g]itlab-runner"
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 10
+  failureThreshold: 3
 
-## Configure the readinessProbe
-readinessProbe: {}
-#   initialDelaySeconds: 60
-#   periodSeconds: 60
-#   successThreshold: 1
-#   failureThreshold: 3
+readinessProbe:
+  exec:
+    command:
+      - /bin/sh
+      - -c
+      - ps aux | grep -v grep | grep -q "[g]itlab-runner"
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
 
 gitlabUrl: https://gitlab.your-domain.com/
 unregisterRunners: true

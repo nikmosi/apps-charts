@@ -11,5 +11,5 @@ keywords:
   - traffic
 dependencies:
   - name: locust
-    version: "0.31.7"
+    version: "0.31.6"
     repository: "https://charts.deliveryhero.io/"
