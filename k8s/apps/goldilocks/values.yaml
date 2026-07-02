@@ -1,0 +1,40 @@
+controller:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 192Mi
+    requests:
+      cpu: 15m
+      memory: 100Mi
+
+dashboard:
+  replicaCount: 2
+  ingress:
+    annotations:
+      traefik.ingress.kubernetes.io/router.middlewares: apps-goldilocks-authentik-forward-auth@kubernetescrd
+    enabled: true
+    hosts:
+      - host: goldilocks.xinfra.ru
+        paths:
+          - path: /
+            type: Prefix
+    ingressClassName: traefik
+    tls:
+      - hosts:
+          - goldilocks.xinfra.ru
+        secretName: wildcard-xinfra-ru-tls
+  resources:
+    limits:
+      cpu: 100m
+      memory: 192Mi
+    requests:
+      cpu: 15m
+      memory: 100Mi
+
+metrics-server:
+  enabled: false
+
+vpa:
+  enabled: true
+  updater:
+    enabled: false

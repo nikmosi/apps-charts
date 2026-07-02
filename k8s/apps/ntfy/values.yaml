@@ -125,10 +125,11 @@ persistence:
 
 resources:
   requests:
-    cpu: 11m
-    memory: 50Mi
+    cpu: 15m
+    memory: 64Mi
   limits:
-    memory: 128Mi
+    cpu: 100m
+    memory: 256Mi
 
 livenessProbe:
   httpGet:

@@ -58,6 +58,8 @@ spec:
             runAsGroup: {{ .Values.bootstrap.securityContext.runAsGroup }}
             seccompProfile:
               type: RuntimeDefault
+          resources:
+            {{- toYaml .Values.bootstrap.resources | nindent 12 }}
           volumeMounts:
             - name: group-configs
               mountPath: /bootstrap/group-configs

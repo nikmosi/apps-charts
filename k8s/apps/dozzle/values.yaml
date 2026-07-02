@@ -107,7 +107,13 @@ podSecurityContext: {}
 
 securityContext: {}
 
-resources: {}
+resources:
+  requests:
+    cpu: 15m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
 
 startupProbe:
   enabled: true

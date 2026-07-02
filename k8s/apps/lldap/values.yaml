@@ -44,11 +44,11 @@ lldap:
     UID: "1000"
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 25m
+      memory: 64Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -111,6 +111,13 @@ bootstrap:
   adminPasswordSecret: lldap-secrets
   adminPasswordKey: lldap-ldap-user-pass
   userPasswordsSecret: lldap-user-passwords
+  resources:
+    requests:
+      cpu: 15m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
   securityContext:
     runAsUser: 1000
     runAsGroup: 1000

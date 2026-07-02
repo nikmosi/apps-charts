@@ -233,10 +233,11 @@ forgejo:
   ## @param resources Kubernetes resources
   resources:
     limits:
-      memory: 384Mi
+      cpu: 500m
+      memory: 512Mi
     requests:
-      cpu: 23m
-      memory: 215Mi
+      cpu: 50m
+      memory: 256Mi
 
   ## Use an alternate scheduler, e.g. "stork".
   ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
@@ -614,9 +615,10 @@ valkey:
   resources:
     requests:
       cpu: 15m
-      memory: 100Mi
+      memory: 32Mi
     limits:
-      memory: 192Mi
+      cpu: 100m
+      memory: 128Mi
   podSecurityContext: {}
   securityContext:
     runAsUser: 0

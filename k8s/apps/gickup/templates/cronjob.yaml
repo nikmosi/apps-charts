@@ -60,6 +60,8 @@ spec:
                   readOnly: true
                 - name: ssh-key
                   mountPath: /tmp/ssh
+              resources:
+                {{- toYaml .Values.initResources | nindent 16 }}
           containers:
             - name: gickup
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

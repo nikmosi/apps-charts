@@ -771,16 +771,12 @@ front:
   ## @param front.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 200m
-    ##    memory: 200Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 100Mi
-    requests: {}
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -988,16 +984,12 @@ admin:
   ## @param admin.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 500Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 25Mi
-    requests: {}
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -1196,6 +1188,13 @@ redis:
       existingClaim: ""
       subPath: ""
       annotations: {}
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 15m
+        memory: 32Mi
 
   ## @param redis.replica.count Number of redis replicas (only if `redis.architecture=replication`)
   ## Don't forget to configure replicas persistence if changing this value
@@ -1266,16 +1265,12 @@ postfix:
   ## @param postfix.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 2Gi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 500m
-    ##    memory: 2Gi
-    requests: {}
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -1476,16 +1471,12 @@ dovecot:
   ## @param dovecot.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 500Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 25Mi
-    requests: {}
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -1800,16 +1791,12 @@ rspamd:
   ## @param rspamd.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 200m
-    ##    memory: 200Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 100m
-    ##    memory: 100Mi
-    requests: {}
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -2055,16 +2042,12 @@ clamav:
   ## @param clamav.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 1
-    ##    memory: 2Gi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 1
-    ##    memory: 1Gi
-    requests: {}
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -2282,16 +2265,12 @@ webmail:
   ## @param webmail.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 200m
-    ##    memory: 200Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 100m
-    ##    memory: 100Mi
-    requests: {}
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -2482,16 +2461,12 @@ webdav:
   ## @param webdav.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 500Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 25Mi
-    requests: {}
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -2685,16 +2660,12 @@ fetchmail:
   ## @param fetchmail.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 200m
-    ##    memory: 200Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 100m
-    ##    memory: 100Mi
-    requests: {}
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 25m
+      memory: 64Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -2872,16 +2843,12 @@ oletools:
   ## @param oletools.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 500Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 25Mi
-    requests: {}
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 15m
+      memory: 32Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -3066,16 +3033,12 @@ tika:
   ## @param tika.resources.requests The requested resources for the container
   ##
   resources:
-    ## Example:
-    ## limits:
-    ##    cpu: 500m
-    ##    memory: 500Mi
-    limits: {}
-    ## Examples:
-    ## requests:
-    ##    cpu: 25m
-    ##    memory: 25Mi
-    requests: {}
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 50m
+      memory: 256Mi
 
   ## Liveness probe values
   ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes

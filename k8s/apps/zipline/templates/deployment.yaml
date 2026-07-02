@@ -50,6 +50,8 @@ spec:
             - >
               until pg_isready -h {{ include "zipline.postgresqlServiceName" . }} -p 5432 -U {{ .Values.postgresql.auth.username }} -d {{ .Values.postgresql.auth.database }};
               do echo waiting for postgresql; sleep 2; done
+          resources:
+            {{- toYaml .Values.initResources | nindent 12 }}
       containers:
         - name: zipline
           {{- with .Values.securityContext }}

@@ -85,7 +85,8 @@ resources:
     cpu: 100m
     memory: 256Mi
   limits:
-    memory: 1000Mi
+    cpu: 500m
+    memory: 1Gi
 
 livenessProbe:
   enabled: true

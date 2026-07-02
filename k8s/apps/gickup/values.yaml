@@ -47,6 +47,14 @@ resources:
     cpu: 500m
     memory: 256Mi
 
+initResources:
+  requests:
+    cpu: 15m
+    memory: 32Mi
+  limits:
+    cpu: 50m
+    memory: 64Mi
+
 nodeSelector: {}
 tolerations: []
 affinity: {}

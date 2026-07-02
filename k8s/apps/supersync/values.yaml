@@ -101,6 +101,7 @@ resources:
     cpu: 100m
     memory: 128Mi
   limits:
+    cpu: 500m
     memory: 768Mi
 
 livenessProbe:
@@ -186,6 +187,7 @@ postgresql:
         cpu: 200m
         memory: 256Mi
       limits:
+        cpu: 1000m
         memory: 1Gi
   metrics:
     enabled: false
