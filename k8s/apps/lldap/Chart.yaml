@@ -2,7 +2,7 @@ apiVersion: v2
 name: lldap-stack
 description: LLDAP identity provider with bootstrap job
 type: application
-version: 0.1.3
+version: 0.1.4
 appVersion: "2026-01-06"
 dependencies:
   - name: lldap
