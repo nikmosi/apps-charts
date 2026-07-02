@@ -166,6 +166,11 @@ affinity: {}
 
 postgresql:
   enabled: true
+  image:
+    registry: registry-1.docker.io
+    repository: bitnami/postgresql
+    tag: sha256-7eaa445b1045a7a5665ce274f1c5376bd24c938df01453618d3fda12a3d6baad
+    pullPolicy: IfNotPresent
   auth:
     username: supersync
     password: ""
