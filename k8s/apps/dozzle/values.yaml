@@ -5,7 +5,7 @@ image:
   repository: amir20/dozzle
   tag: latest
   digest: sha256:1cc972250626553009ddacbdf1f5725b681cdcbabe551fec69cd728882ffbc58
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: dozzle
@@ -103,9 +103,20 @@ forwardAuth:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
 
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
 
 resources:
   requests:

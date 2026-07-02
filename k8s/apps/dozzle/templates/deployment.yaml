@@ -69,11 +69,19 @@ spec:
           {{- end }}
           {{- if .Values.persistence.enabled }}
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: data
               mountPath: {{ .Values.persistence.mountPath | quote }}
+          {{- else }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           {{- end }}
-      {{- if .Values.persistence.enabled }}
       volumes:
+        - name: tmp
+          emptyDir: {}
+      {{- if .Values.persistence.enabled }}
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.claimName | quote }}
