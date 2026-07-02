@@ -8,6 +8,11 @@ image:
   pullPolicy: IfNotPresent
   tag: "0.10.45"
 
+initImage:
+  repository: busybox
+  pullPolicy: IfNotPresent
+  tag: "1.37.0"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

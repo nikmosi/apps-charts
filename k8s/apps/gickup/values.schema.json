@@ -25,6 +25,24 @@
         }
       }
     },
+    "initImage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        },
+        "tag": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
     "backoffLimit": {
       "type": "integer",
       "minimum": 0

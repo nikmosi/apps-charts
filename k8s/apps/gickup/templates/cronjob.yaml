@@ -43,7 +43,8 @@ spec:
               emptyDir: {}
           initContainers:
             - name: init-ssh-key
-              image: busybox
+              image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
+              imagePullPolicy: {{ .Values.initImage.pullPolicy }}
               command:
                 - sh
                 - -c
