@@ -38,3 +38,13 @@ vpa:
   enabled: true
   updater:
     enabled: false
+  admissionController:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 500Mi
+  recommender:
+    resources:
+      limits:
+        cpu: 200m
+        memory: 1000Mi

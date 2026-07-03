@@ -67,22 +67,22 @@ spec:
               subPath: conf
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
-            runAsUser: 0
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- end }}
         {{- if .Values.auth.enabled }}
         - name: init-auth
-          image: {{ include "adguard.image" . | quote }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.initAuthImage.repository }}:{{ .Values.initAuthImage.tag }}"
+          imagePullPolicy: {{ .Values.initAuthImage.pullPolicy }}
           command:
             - sh
             - -c
             - |
               USERNAME=$(cat /opt/adguardhome/auth/{{ .Values.auth.usernameKey }})
               PASSWORD=$(cat /opt/adguardhome/auth/{{ .Values.auth.passwordKey }})
-              apk add --no-cache apache2-utils > /dev/null 2>&1
               HASH=$(echo -n "$PASSWORD" | htpasswd -niB "$USERNAME" | cut -d: -f2)
               if [ ! -f /opt/adguardhome/conf/AdGuardHome.yaml ]; then
                 printf 'auth:\n' > /opt/adguardhome/conf/AdGuardHome.yaml
@@ -103,10 +103,13 @@ spec:
             - name: data
               mountPath: /opt/adguardhome/conf
               subPath: conf
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
-            runAsUser: 0
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- end }}

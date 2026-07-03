@@ -51,12 +51,23 @@ forgejo:
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
     digest: ""
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     rootless: true
     fullOverride: ""
 
   ## @param imagePullSecrets Secret to use for pulling the image
   imagePullSecrets: []
+
+  ## @param containerSecurityContext Security context for init and Forgejo containers
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
 
   ## @section Service
   service:
@@ -582,7 +593,7 @@ valkey:
   image:
     repository: valkey/valkey
     tag: 8-alpine
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   service:
     type: ClusterIP
     port: 6379
@@ -619,10 +630,20 @@ valkey:
     limits:
       cpu: 100m
       memory: 128Mi
-  podSecurityContext: {}
+  podSecurityContext:
+    fsGroup: 1000
+    fsGroupChangePolicy: OnRootMismatch
+    seccompProfile:
+      type: RuntimeDefault
   securityContext:
-    runAsUser: 0
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    readOnlyRootFilesystem: true
     allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
   persistence:
     accessModes:
       - ReadWriteOnce
