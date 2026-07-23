@@ -3,6 +3,24 @@ schedule: "0 2 * * *"
 backoffLimit: 2
 activeDeadlineSeconds: 7200
 
+config:
+  source:
+    gitea:
+      - token_file: /etc/gickup/secrets/forgejo-token
+        user: nikmosi
+        url: https://git.xinfra.ru
+        ssh: true
+        sshkey: /tmp/gickup-ssh-key
+  destination:
+    gitea:
+      - token_file: /etc/gickup/secrets/codeberg-token
+        user: nikmosi
+        url: https://codeberg.org
+        mirror:
+          enabled: true
+        visibility:
+          repositories: private
+
 image:
   repository: buddyspencer/gickup
   pullPolicy: IfNotPresent

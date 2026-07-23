@@ -8,19 +8,4 @@ metadata:
     {{- include "gickup.labels" . | nindent 4 }}
 data:
   conf.yml: |
-    source:
-      gitea:
-        - token_file: /etc/gickup/secrets/forgejo-token
-          user: nikmosi
-          url: https://git.xinfra.ru
-          ssh: true
-          sshkey: /tmp/gickup-ssh-key
-    destination:
-      gitea:
-        - token_file: /etc/gickup/secrets/codeberg-token
-          user: nikmosi
-          url: https://codeberg.org
-          mirror:
-            enabled: true
-          visibility:
-            repositories: private
+    {{- toYaml .Values.config | nindent 4 }}
