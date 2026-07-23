@@ -10,7 +10,7 @@ config:
         user: nikmosi
         url: https://git.xinfra.ru
         ssh: true
-        sshkey: /tmp/gickup-ssh-key
+        sshkey: /etc/gickup/secrets/ssh-key
   destination:
     gitea:
       - token_file: /etc/gickup/secrets/codeberg-token
@@ -25,11 +25,6 @@ image:
   repository: buddyspencer/gickup
   pullPolicy: IfNotPresent
   tag: "0.10.45"
-
-initImage:
-  repository: busybox
-  pullPolicy: IfNotPresent
-  tag: "1.37.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -47,6 +42,7 @@ podAnnotations: {}
 podLabels: {}
 
 podSecurityContext:
+  fsGroup: 65534
   seccompProfile:
     type: RuntimeDefault
 
@@ -64,14 +60,6 @@ resources:
   limits:
     cpu: 500m
     memory: 256Mi
-
-initResources:
-  requests:
-    cpu: 15m
-    memory: 32Mi
-  limits:
-    cpu: 50m
-    memory: 64Mi
 
 nodeSelector: {}
 tolerations: []

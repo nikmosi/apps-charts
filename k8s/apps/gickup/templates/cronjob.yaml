@@ -36,32 +36,9 @@ spec:
             - name: secrets
               secret:
                 secretName: {{ .Values.existingSecret }}
-                defaultMode: 0400
+                defaultMode: 0440
             - name: temp
               emptyDir: {}
-            - name: ssh-key
-              emptyDir: {}
-          initContainers:
-            - name: init-ssh-key
-              image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
-              imagePullPolicy: {{ .Values.initImage.pullPolicy }}
-              command:
-                - sh
-                - -c
-                - |
-                  cp /etc/gickup/secrets/ssh-key /tmp/ssh/gickup-ssh-key
-                  chmod 0400 /tmp/ssh/gickup-ssh-key
-                  chown 65534:65534 /tmp/ssh/gickup-ssh-key
-              securityContext:
-                runAsUser: 0
-              volumeMounts:
-                - name: secrets
-                  mountPath: /etc/gickup/secrets
-                  readOnly: true
-                - name: ssh-key
-                  mountPath: /tmp/ssh
-              resources:
-                {{- toYaml .Values.initResources | nindent 16 }}
           containers:
             - name: gickup
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -86,8 +63,6 @@ spec:
                   readOnly: true
                 - name: temp
                   mountPath: /tmp
-                - name: ssh-key
-                  mountPath: /tmp/ssh
               resources:
                 {{- toYaml .Values.resources | nindent 16 }}
           {{- with .Values.nodeSelector }}
