@@ -32,9 +32,9 @@ forgejo:
   ## @param strategy.rollingUpdate.maxSurge maxSurge
   ## @param strategy.rollingUpdate.maxUnavailable maxUnavailable
   strategy:
-    type: Recreate
+    type: RollingUpdate
     rollingUpdate:
-      maxSurge: "100%"
+      maxSurge: 1
       maxUnavailable: 0
 
   ## @section Image
@@ -273,7 +273,7 @@ forgejo:
     annotations: {}
 
   ## @param replicaCount number of replicas for the deployment
-  replicaCount: 1
+  replicaCount: 2
 
   ## @section ServiceAccount
 
@@ -309,10 +309,10 @@ forgejo:
     enabled: true
     create: true
     mount: true
-    claimName: gitea-shared-storage
-    size: 50Gi
+    claimName: forgejo-shared-storage-rwx
+    size: 10Gi
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     labels:
       app.kubernetes.io/name: forgejo
       app.kubernetes.io/instance: forgejo
