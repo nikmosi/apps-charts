@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "xray.fullname" . }}
+  labels:
+    {{- include "xray.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "xray.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- if and (not .Values.xray.existingConfigMap) (not .Values.xray.existingSecret) }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "xray.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "xray.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.geoAssets.enabled }}
+      initContainers:
+        - name: download-geo-assets
+          image: "{{ .Values.geoAssets.image.repository }}:{{ .Values.geoAssets.image.tag }}"
+          imagePullPolicy: {{ .Values.geoAssets.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "Downloading geoip.dat..."
+              curl -sSL -o {{ .Values.geoAssets.mountPath }}/geoip.dat {{ .Values.geoAssets.urls.geoip | quote }}
+              echo "Downloading geosite.dat..."
+              curl -sSL -o {{ .Values.geoAssets.mountPath }}/geosite.dat {{ .Values.geoAssets.urls.geosite | quote }}
+              echo "Geo assets successfully placed into {{ .Values.geoAssets.mountPath }}"
+          securityContext:
+            {{- toYaml .Values.geoAssets.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.geoAssets.resources | nindent 12 }}
+          volumeMounts:
+            - name: geo-assets-volume
+              mountPath: {{ .Values.geoAssets.mountPath }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "xray.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.geoAssets.enabled }}
+          env:
+            - name: XRAY_LOCATION_ASSET
+              value: {{ .Values.geoAssets.mountPath | quote }}
+          {{- end }}
+          ports:
+            {{- range .Values.service.ports }}
+            - name: {{ .name }}
+              containerPort: {{ .targetPort }}
+              protocol: {{ default "TCP" .protocol }}
+            {{- end }}
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.livenessProbe.tcpSocket.port }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.readinessProbe.enabled }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.readinessProbe.tcpSocket.port }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
+            tcpSocket:
+              port: {{ .Values.startupProbe.tcpSocket.port }}
+            initialDelaySeconds: {{ .Values.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.startupProbe.failureThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: {{ .Values.xray.configPath }}
+              subPath: config.json
+              readOnly: true
+            {{- if .Values.geoAssets.enabled }}
+            - name: geo-assets-volume
+              mountPath: {{ .Values.geoAssets.mountPath }}
+            {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: config-volume
+          {{- if .Values.xray.existingSecret }}
+          secret:
+            secretName: {{ .Values.xray.existingSecret }}
+          {{- else if .Values.xray.existingConfigMap }}
+          configMap:
+            name: {{ .Values.xray.existingConfigMap }}
+          {{- else }}
+          configMap:
+            name: {{ include "xray.fullname" . }}
+          {{- end }}
+        {{- if .Values.geoAssets.enabled }}
+        - name: geo-assets-volume
+          emptyDir: {}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

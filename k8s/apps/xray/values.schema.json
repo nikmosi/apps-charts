@@ -1,0 +1,157 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Xray Values Schema",
+  "type": "object",
+  "required": [
+    "replicaCount",
+    "image",
+    "service"
+  ],
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "image": {
+      "type": "object",
+      "required": [
+        "repository",
+        "pullPolicy",
+        "tag"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": [
+            "Always",
+            "Never",
+            "IfNotPresent"
+          ]
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "geoAssets": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "mountPath": {
+          "type": "string"
+        },
+        "urls": {
+          "type": "object",
+          "properties": {
+            "geoip": {
+              "type": "string"
+            },
+            "geosite": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "automountServiceAccountToken": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "xray": {
+      "type": "object",
+      "properties": {
+        "configPath": {
+          "type": "string"
+        },
+        "config": {
+          "type": "string"
+        },
+        "existingConfigMap": {
+          "type": "string"
+        },
+        "existingSecret": {
+          "type": "string"
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "required": [
+        "type",
+        "ports"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "ClusterIP",
+            "NodePort",
+            "LoadBalancer",
+            "ExternalName"
+          ]
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "port",
+              "targetPort"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "port": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 65535
+              },
+              "targetPort": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
+              },
+              "protocol": {
+                "type": "string",
+                "enum": [
+                  "TCP",
+                  "UDP",
+                  "SCTP"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "className": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

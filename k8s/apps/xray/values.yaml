@@ -1,0 +1,250 @@
+# Default values for xray.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount is the number of pod replicas to deploy.
+replicaCount: 1
+
+image:
+  # image.repository is the container image repository.
+  repository: "teddysun/xray"
+  # image.pullPolicy is the image pull policy.
+  pullPolicy: "IfNotPresent"
+  # image.tag overrides the image tag whose default is the chart appVersion.
+  tag: "26.7.11"
+
+# imagePullSecrets is a list of secret names for pulling images from private registries.
+imagePullSecrets: []
+# nameOverride overrides the name of the chart.
+nameOverride: ""
+# fullnameOverride overrides the fully qualified app name.
+fullnameOverride: ""
+
+serviceAccount:
+  # serviceAccount.create specifies whether a service account should be created.
+  create: true
+  # serviceAccount.automountServiceAccountToken specifies whether to automount the SA token.
+  automountServiceAccountToken: false
+  # serviceAccount.annotations to add to the service account.
+  annotations: {}
+  # serviceAccount.name is the name of the service account to use; if not set and create is true, a name is generated.
+  name: ""
+
+# podAnnotations is a map of annotations to add to the pods.
+podAnnotations: {}
+# podLabels is a map of labels to add to the pods.
+podLabels: {}
+
+# podSecurityContext specifies pod-level security options.
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: "RuntimeDefault"
+
+# securityContext specifies container-level security options.
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - "ALL"
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+# geoAssets configures downloading geoip/geosite database files into an emptyDir volume.
+geoAssets:
+  # geoAssets.enabled enables the initContainer to download geoip.dat and geosite.dat at startup.
+  enabled: true
+  # geoAssets.mountPath specifies the directory path where geoip.dat and geosite.dat will be stored.
+  mountPath: "/usr/local/share/xray"
+  image:
+    repository: "curlimages/curl"
+    tag: "8.6.0"
+    pullPolicy: "IfNotPresent"
+  urls:
+    # URL for downloading geoip.dat
+    geoip: "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat"
+    # URL for downloading geosite.dat (dlc.dat will be saved as geosite.dat)
+    geosite: "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat"
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    capabilities:
+      drop:
+        - "ALL"
+  resources:
+    limits:
+      cpu: "100m"
+      memory: "128Mi"
+    requests:
+      cpu: "10m"
+      memory: "32Mi"
+
+# xray specifies configuration for the Xray service.
+xray:
+  # xray.configPath is the path inside the container where config.json is mounted.
+  configPath: "/etc/xray/config.json"
+  # xray.config is the default JSON configuration content for Xray (mixed inbound + vless outbound).
+  config: |
+    {
+      "log": {
+        "loglevel": "warning"
+      },
+      "inbounds": [
+        {
+          "tag": "mixed-in",
+          "port": 8080,
+          "listen": "0.0.0.0",
+          "protocol": "mixed",
+          "settings": {
+            "auth": "noauth",
+            "udp": true
+          }
+        }
+      ],
+      "outbounds": [
+        {
+          "tag": "vless-out",
+          "protocol": "vless",
+          "settings": {
+            "vnext": [
+              {
+                "address": "example.com",
+                "port": 443,
+                "users": [
+                  {
+                    "id": "1eb6e917-774b-4a84-aff6-b058577c60a5",
+                    "encryption": "none"
+                  }
+                ]
+              }
+            ]
+          },
+          "streamSettings": {
+            "network": "tcp",
+            "security": "tls",
+            "tlsSettings": {
+              "serverName": "example.com"
+            }
+          }
+        },
+        {
+          "tag": "direct",
+          "protocol": "freedom"
+        },
+        {
+          "tag": "block",
+          "protocol": "blackhole"
+        }
+      ],
+      "routing": {
+        "domainStrategy": "AsIs",
+        "rules": [
+          {
+            "type": "field",
+            "outboundTag": "direct",
+            "domain": [
+              "geosite:cn"
+            ]
+          },
+          {
+            "type": "field",
+            "outboundTag": "direct",
+            "ip": [
+              "geoip:private",
+              "geoip:cn"
+            ]
+          }
+        ]
+      }
+    }
+  # xray.existingConfigMap can be set to use an existing ConfigMap instead of creating one from xray.config.
+  existingConfigMap: ""
+  # xray.existingSecret can be set to use an existing Secret containing config.json.
+  existingSecret: ""
+
+service:
+  # service.type is the Kubernetes Service type.
+  type: "ClusterIP"
+  # service.annotations to add to the service.
+  annotations: {}
+  # service.ports defines the list of ports exposed by the service.
+  ports:
+    - name: "mixed"
+      port: 8080
+      targetPort: 8080
+      protocol: "TCP"
+
+ingress:
+  # ingress.enabled specifies whether an ingress resource should be created.
+  enabled: false
+  # ingress.className specifies the Ingress class name.
+  className: ""
+  # ingress.annotations to add to the ingress resource.
+  annotations: {}
+  # ingress.hosts defines the list of host configuration rules.
+  hosts:
+    - host: "xray.local"
+      paths:
+        - path: "/"
+          pathType: "Prefix"
+          port: 8080
+  # ingress.tls defines TLS configuration for the ingress.
+  tls: []
+
+# resources specifies resource limits and requests for the container.
+resources:
+  limits:
+    cpu: "200m"
+    memory: "256Mi"
+  requests:
+    cpu: "20m"
+    memory: "32Mi"
+
+# livenessProbe defines the liveness probe configuration for the container.
+livenessProbe:
+  enabled: true
+  tcpSocket:
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 20
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+# readinessProbe defines the readiness probe configuration for the container.
+readinessProbe:
+  enabled: true
+  tcpSocket:
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 2
+  failureThreshold: 3
+
+# startupProbe defines the startup probe configuration for the container.
+startupProbe:
+  enabled: false
+  tcpSocket:
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 30
+
+# nodeSelector specifies node selection rules.
+nodeSelector: {}
+# tolerations specifies pod tolerations.
+tolerations: []
+# affinity specifies pod affinity/anti-affinity.
+affinity: {}
+
+# extraVolumes specifies additional volumes to mount in the pod.
+extraVolumes: []
+# extraVolumeMounts specifies additional volume mounts for the container.
+extraVolumeMounts: []
