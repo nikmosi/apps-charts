@@ -1,0 +1,8 @@
+1. Get the list of created CronJobs by running:
+  kubectl get cronjob -l app.kubernetes.io/instance={{ .Release.Name }}
+
+2. To trigger an immediate manual job run for a target (e.g. github):
+  kubectl create job --from=cronjob/{{ include "forgesync.fullname" . }}-github {{ include "forgesync.fullname" . }}-manual-run-$(date +%s)
+
+3. View job logs:
+  kubectl logs -l app.kubernetes.io/instance={{ .Release.Name }} -f --tail=100

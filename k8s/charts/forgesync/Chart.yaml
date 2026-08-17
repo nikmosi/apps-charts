@@ -1,0 +1,17 @@
+apiVersion: v2
+name: forgesync
+description: Helm chart for forgesync - automatic mirror of Forgejo repositories to GitHub or other Forgejo instances
+type: application
+version: 0.1.0
+appVersion: "1.2.0"
+keywords:
+  - forgejo
+  - git
+  - sync
+  - mirror
+  - cronjob
+home: https://zot.xinfra.ru
+sources:
+  - https://zot.xinfra.ru/forgesync
+maintainers:
+  - name: xinfra

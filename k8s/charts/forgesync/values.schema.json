@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Values",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "properties": {
+        "repository": { "type": "string" },
+        "pullPolicy": { "type": "string", "enum": ["Always", "Never", "IfNotPresent"] },
+        "tag": { "type": "string" }
+      },
+      "required": ["repository", "pullPolicy"]
+    },
+    "schedule": { "type": "string" },
+    "source": { "type": "string" },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "includePrivate": { "type": "boolean" },
+        "includeForks": { "type": "boolean" },
+        "logLevel": { "type": "string" },
+        "descriptionTemplate": { "type": "string" },
+        "remirror": { "type": "boolean" },
+        "purge": { "type": "boolean" },
+        "skipInitial": { "type": "boolean" },
+        "onCommit": { "type": "boolean" },
+        "dryRun": { "type": "boolean" },
+        "include": { "type": "array", "items": { "type": "string" } },
+        "exclude": { "type": "array", "items": { "type": "string" } },
+        "feature": { "type": "array", "items": { "type": "string" } },
+        "existingSecret": { "type": "string" }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "target": { "type": "string" },
+          "schedule": { "type": "string" },
+          "source": { "type": "string" },
+          "includePrivate": { "type": "boolean" },
+          "includeForks": { "type": "boolean" },
+          "logLevel": { "type": "string" },
+          "descriptionTemplate": { "type": "string" },
+          "remirror": { "type": "boolean" },
+          "purge": { "type": "boolean" },
+          "skipInitial": { "type": "boolean" },
+          "onCommit": { "type": "boolean" },
+          "dryRun": { "type": "boolean" },
+          "include": { "type": "array", "items": { "type": "string" } },
+          "exclude": { "type": "array", "items": { "type": "string" } },
+          "feature": { "type": "array", "items": { "type": "string" } },
+          "existingSecret": { "type": "string" },
+          "env": { "type": "array" },
+          "envFrom": { "type": "array" }
+        },
+        "required": ["target"]
+      }
+    },
+    "secret": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "data": { "type": "object" }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "automount": { "type": "boolean" },
+        "annotations": { "type": "object" },
+        "name": { "type": "string" }
+      }
+    }
+  }
+}

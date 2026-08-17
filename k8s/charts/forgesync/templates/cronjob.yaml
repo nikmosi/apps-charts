@@ -1,0 +1,83 @@
+{{- range $targetName, $target := .Values.targets }}
+{{- $enabled := true -}}
+{{- if hasKey $target "enabled" -}}
+  {{- $enabled = $target.enabled -}}
+{{- end -}}
+{{- if $enabled }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "forgesync.fullname" $ }}-{{ $targetName }}
+  labels:
+    {{- include "forgesync.labels" $ | nindent 4 }}
+    app.kubernetes.io/target: {{ $targetName | quote }}
+spec:
+  schedule: {{ $target.schedule | default $.Values.schedule | quote }}
+  concurrencyPolicy: {{ $target.concurrencyPolicy | default $.Values.concurrencyPolicy | default "Forbid" | quote }}
+  successfulJobsHistoryLimit: {{ $target.successfulJobsHistoryLimit | default $.Values.successfulJobsHistoryLimit | default 3 }}
+  failedJobsHistoryLimit: {{ $target.failedJobsHistoryLimit | default $.Values.failedJobsHistoryLimit | default 1 }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with $target.podAnnotations | default $.Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+            {{- include "forgesync.labels" $ | nindent 12 }}
+            app.kubernetes.io/target: {{ $targetName | quote }}
+            {{- with $target.podLabels | default $.Values.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          {{- with $.Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "forgesync.serviceAccountName" $ }}
+          securityContext:
+            {{- toYaml ($target.podSecurityContext | default $.Values.podSecurityContext) | nindent 12 }}
+          restartPolicy: {{ $target.restartPolicy | default $.Values.restartPolicy | default "OnFailure" }}
+          containers:
+            - name: forgesync
+              securityContext:
+                {{- toYaml ($target.securityContext | default $.Values.securityContext) | nindent 16 }}
+              image: "{{ if and $target.image $target.image.repository }}{{ $target.image.repository }}{{ else }}{{ $.Values.image.repository }}{{ end }}:{{ if and $target.image $target.image.tag }}{{ $target.image.tag }}{{ else }}{{ $.Values.image.tag | default $.Chart.AppVersion }}{{ end }}"
+              imagePullPolicy: {{ if and $target.image $target.image.pullPolicy }}{{ $target.image.pullPolicy }}{{ else }}{{ $.Values.image.pullPolicy }}{{ end }}
+              args:
+                {{- include "forgesync.args" (dict "root" $ "target" $target) | nindent 16 }}
+              {{- with $target.env | default $.Values.env }}
+              env:
+                {{- toYaml . | nindent 16 }}
+              {{- end }}
+              {{- $existingSecret := $target.existingSecret | default $.Values.defaults.existingSecret -}}
+              {{- $envFromList := $target.envFrom | default $.Values.envFrom -}}
+              {{- if or $existingSecret $envFromList }}
+              envFrom:
+                {{- if $existingSecret }}
+                - secretRef:
+                    name: {{ $existingSecret | quote }}
+                {{- end }}
+                {{- with $envFromList }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+              {{- end }}
+              resources:
+                {{- toYaml ($target.resources | default $.Values.resources) | nindent 16 }}
+          {{- with $target.nodeSelector | default $.Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $target.affinity | default $.Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $target.tolerations | default $.Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+{{ end }}
+{{- end }}

@@ -1,0 +1,162 @@
+# -- Container image configuration
+image:
+  # -- Container image repository
+  repository: "zot.xinfra.ru/forgesync"
+  # -- Container image pull policy
+  pullPolicy: "IfNotPresent"
+  # -- Container image tag (defaults to chart appVersion)
+  tag: "v1.2.0"
+
+# -- Secrets for pulling container image
+imagePullSecrets: []
+
+# -- Override default chart name
+nameOverride: ""
+
+# -- Override default full release name
+fullnameOverride: ""
+
+# -- Default cron schedule for sync targets (every 4 hours)
+schedule: "0 */4 * * *"
+
+# -- Default base URL of source Forgejo instance
+source: "https://forgejo.example.com"
+
+# -- Global default configuration options for forgesync CLI
+defaults:
+  # -- Include private repositories by default
+  includePrivate: true
+  # -- Include forks
+  includeForks: false
+  # -- Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  logLevel: "INFO"
+  # -- Description template for repository mirrors
+  descriptionTemplate: ""
+  # -- Whether mirrors should be recreated
+  remirror: false
+  # -- Whether to purge all existing mirrors before creating new ones
+  purge: false
+  # -- Don't tell Forgejo to mirror Git repositories immediately after creating push mirror
+  skipInitial: false
+  # -- Tell Forgejo to sync push mirror immediately on commit
+  onCommit: false
+  # -- Dry run mode (don't actually sync, just print)
+  dryRun: false
+  # -- Regular expressions to include repositories
+  include: []
+  # -- Regular expressions to exclude repositories
+  exclude: []
+  # -- Allow specific repository features
+  feature: []
+  # -- Name of an existing Secret to mount all key-value pairs as environment variables
+  existingSecret: ""
+
+# -- Map of sync targets (each key renders an independent CronJob)
+targets:
+  # -- Example target: Mirroring to GitHub
+  github:
+    # -- Enable or disable this sync target
+    enabled: true
+    # -- Destination target parameter (e.g. "github", "codeberg", or "forgejo=https://...")
+    target: "github"
+    # -- Cron schedule override for this target (falls back to global .Values.schedule)
+    schedule: "0 */4 * * *"
+    # -- Source URL override for this target (falls back to global .Values.source)
+    source: "https://forgejo.example.com"
+    # -- Override includePrivate for this target
+    includePrivate: true
+    # -- Override includeForks for this target
+    includeForks: false
+    # -- Override onCommit for this target (tell Forgejo to sync immediately on commit)
+    onCommit: false
+    # -- Target-specific existing secret name (overrides defaults.existingSecret if set)
+    existingSecret: ""
+    # -- Environment variables passed to the pod (e.g. API tokens)
+    env:
+      - name: FORGEJO_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: forgesync-secret
+            key: FORGEJO_TOKEN
+      - name: GITHUB_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: forgesync-secret
+            key: GITHUB_TOKEN
+    # -- Environment sources passed to the pod
+    envFrom: []
+
+# -- Optional Chart-managed Secret for API tokens
+secret:
+  # -- Create Secret resource
+  create: false
+  # -- Override Secret name
+  name: "forgesync-secret"
+  # -- Key-value pairs for secret data
+  data: {}
+    # FORGEJO_TOKEN: "your-forgejo-token"
+    # GITHUB_TOKEN: "your-github-token"
+
+# -- Default environment variables for all targets if not defined at target level
+env: []
+
+# -- Default environment sources for all targets if not defined at target level
+envFrom: []
+
+# -- CronJob concurrency policy (Allow, Replace, Forbid)
+concurrencyPolicy: "Forbid"
+
+# -- Number of successful jobs to retain
+successfulJobsHistoryLimit: 3
+
+# -- Number of failed jobs to retain
+failedJobsHistoryLimit: 1
+
+# -- Pod restart policy for CronJobs
+restartPolicy: "OnFailure"
+
+# -- ServiceAccount configuration
+serviceAccount:
+  # -- Create ServiceAccount resource
+  create: true
+  # -- Automount ServiceAccount API token
+  automount: true
+  # -- ServiceAccount annotations
+  annotations: {}
+  # -- ServiceAccount name override
+  name: ""
+
+# -- Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: "RuntimeDefault"
+
+# -- Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - "ALL"
+
+# -- Resource limits & requests for containers
+resources: {}
+
+# -- Node selector labels
+nodeSelector: {}
+
+# -- Tolerations specifications
+tolerations: []
+
+# -- Affinity specifications
+affinity: {}
+
+# -- Extra pod annotations
+podAnnotations: {}
+
+# -- Extra pod labels
+podLabels: {}
