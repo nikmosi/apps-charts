@@ -66,6 +66,18 @@ spec:
               {{- end }}
               resources:
                 {{- toYaml ($target.resources | default $.Values.resources) | nindent 16 }}
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+                {{- with $target.volumeMounts | default $.Values.volumeMounts }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+          volumes:
+            - name: tmp
+              emptyDir: {}
+            {{- with $target.volumes | default $.Values.volumes }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- with $target.nodeSelector | default $.Values.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
