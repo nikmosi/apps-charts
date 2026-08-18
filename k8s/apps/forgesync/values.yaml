@@ -61,8 +61,6 @@ targets:
     target: "github"
     # -- Cron schedule override for this target (falls back to global .Values.schedule)
     schedule: "0 */4 * * *"
-    # -- Source URL override for this target (falls back to global .Values.source)
-    source: "https://forgejo.example.com"
     # -- Override includePrivate for this target
     includePrivate: true
     # -- Override includeForks for this target
