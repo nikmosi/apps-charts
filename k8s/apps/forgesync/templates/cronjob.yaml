@@ -1,9 +1,5 @@
 {{- range $targetName, $target := .Values.targets }}
-{{- $enabled := true -}}
-{{- if hasKey $target "enabled" -}}
-  {{- $enabled = $target.enabled -}}
-{{- end -}}
-{{- if $enabled }}
+{{- if (hasKey $target "enabled" | ternary $target.enabled true) }}
 ---
 apiVersion: batch/v1
 kind: CronJob
