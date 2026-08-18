@@ -2,7 +2,7 @@ apiVersion: v2
 name: forgesync
 description: Helm chart for forgesync - automatic mirror of Forgejo repositories to GitHub or other Forgejo instances
 type: application
-version: 0.1.1
+version: 0.1.2
 appVersion: "1.2.0"
 keywords:
   - forgejo

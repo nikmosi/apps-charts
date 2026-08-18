@@ -48,8 +48,12 @@ spec:
               imagePullPolicy: {{ if and $target.image $target.image.pullPolicy }}{{ $target.image.pullPolicy }}{{ else }}{{ $.Values.image.pullPolicy }}{{ end }}
               args:
                 {{- include "forgesync.args" (dict "root" $ "target" $target) | nindent 16 }}
-              {{- with $target.env | default $.Values.env }}
               env:
+                - name: UV_CACHE_DIR
+                  value: "/tmp/uv"
+                - name: TMPDIR
+                  value: "/tmp"
+              {{- with $target.env | default $.Values.env }}
                 {{- toYaml . | nindent 16 }}
               {{- end }}
               {{- $existingSecret := $target.existingSecret | default $.Values.defaults.existingSecret -}}
